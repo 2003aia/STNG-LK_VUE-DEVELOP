@@ -1,0 +1,232 @@
+@import @/assets/styles/vars
+    
+.form
+    &__wizard
+        display: flex
+        border: 1px solid $color-border
+        border-radius: 4px
+        overflow: hidden
+        margin-bottom: 2.5rem
+
+        @media screen and (max-width: $mobile-width)
+            height: 48px
+            overflow-x: auto
+            margin-bottom: 16px
+
+        &-steps
+            display: flex
+            width: 100%
+            flex-shrink: 0
+
+            @media screen and (max-width: $mobile-width)
+                width: 740px
+
+        &-step
+            width: 100%
+            display: flex
+            align-items: center
+            padding: 1.25rem 0 1.25rem 1.5rem
+            position: relative
+            color: $color-font-mute
+
+            &:last-child
+                &::before
+                    display: none
+
+            @media screen and (max-width: $mobile-width)
+                flex-shrink: 0
+                padding: 0 24px 0 16px
+                width: auto
+                &:nth-child(1)
+                    width: 212px
+                    
+
+            &_completed
+                color: #A6BBE1
+                background: $color-primary
+
+                &::before
+                    background: $color-primary !important
+                
+                &::after
+                    background:
+                        image: url('../../assets/images/wizard-angle-primary.svg') !important
+                
+                .form__wizard-step-number
+                    background: #fff
+                    border-color: #fff
+                    color: #fff
+                    position: relative
+
+                    &::before
+                        position: absolute
+                        top: -1px
+                        left: -1px
+                        width: 24px
+                        height: 24px
+                        content: ''
+                        background:
+                            image: url('../../assets/images/wizard-check.svg')
+                            repeat: no-repeat
+                            position: center
+
+            &_active
+                background: $color-primary
+                color: #fff
+
+                &::after
+                    background:
+                        image: url('../../assets/images/wizard-angle-filled.svg') !important
+
+                .form__wizard-step-number
+                    border-color: $color-primary-border
+
+            &::after
+                content: ''
+                position: absolute
+                width: 12px
+                height: 100%
+                top: 0
+                right: -6px
+                background:
+                    image: url('../../assets/images/wizard-angle.svg')
+                    repeat: no-repeat
+                    position: left
+                z-index: 2
+            
+            &::before
+                position: absolute
+                content: ''
+                width: 12px
+                height: 100%
+                top: 0
+                right: -6px
+                z-index: 1
+                background: #fff
+            
+            &:last-child
+                &::after
+                    display: none
+
+            &-number
+                line-height: 22px
+                font:
+                    size: .8125rem
+                    weight: 500
+                
+                width: 24px
+                border: 1px solid $color-border
+                border-radius: 50%
+                text-align: center
+                margin-right: .5rem
+
+            &-title
+                line-height: 1.5rem
+                font:
+                    size: .8125rem
+                    weight: 500
+
+    &__section
+        margin-bottom: 2.5rem
+
+        &:last-child
+            margin-bottom: 0
+
+        &-title
+            color: $color-primary
+            margin-bottom: 1rem
+            font:
+                size: .9375rem
+                weight: 500
+    
+    &__footer
+        margin-top: 2.5rem
+        border-top: 1px solid $color-border
+        margin-bottom: 1rem
+        padding-top: 1.5rem
+        display: flex
+
+        @media screen and (max-width: $mobile-width)
+            margin-top: 16px
+            padding-top: 0
+            border-top: none
+            flex-direction: column-reverse
+
+        button
+            @media screen and (max-width: $mobile-width)
+                width: 100%
+
+        &-buttons
+            display: flex
+
+            @media screen and (max-width: $mobile-width)
+                width: 100%
+
+            button
+                margin-right: 1rem
+
+                @media screen and (max-width: $mobile-width)
+                    width: 100%
+                    margin-right: 0
+
+                    &:first-child
+                        margin-right: 8px
+                    
+                    &:last-child
+                        margin-left: 8px
+
+    &__hr
+        margin: 2.75rem 0
+        height: 1px
+        background: $color-border
+        display: flex
+        justify-content: center
+
+        @media screen and (max-width: $mobile-width)
+            margin: 20px 0
+        
+        &-text
+            padding: 0 10px
+            background: #fff
+            margin-top: -.75rem
+            font:
+                weight: 500
+                size: 15px
+            line-height: 1.5rem
+            color: $color-font-mute-variant
+
+    &__upload-docs
+        border: 1px solid $color-border
+        border-radius: 4px
+
+        &-item
+            border-bottom: 1px solid $color-border
+            display: flex
+            align-items: center
+            padding: 1rem
+
+            @media screen and (max-width: $mobile-width)
+                flex-direction: column
+
+            &:last-child
+                border-bottom: none
+
+        &-name
+            flex-grow: 1
+            font-size: 13px
+            line-height: 1.5rem
+
+        &-button
+            flex-shrink: 0
+            margin-left: 2rem
+
+            @media screen and (max-width: $mobile-width)
+                margin: 8px 0 0
+                width: 100%
+
+            .button
+                width: 144px
+                width: 100%
+                font-size: 13px
+                white-space: nowrap
+                height: 40px

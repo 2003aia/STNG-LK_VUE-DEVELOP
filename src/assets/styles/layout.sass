@@ -1,0 +1,151 @@
+@import @/assets/styles/vars
+    
+.layout
+    height: 100%
+    font-size: .95rem
+    display: flex
+    
+    &_column
+        flex:
+            direction: column
+
+    &__main
+        width: 100%
+        flex-grow: 1
+        padding: 1.5rem
+        display: flex
+        flex-direction: column
+
+    &__title
+        color: $color-primary
+        font:
+            size: .95rem
+            weight: 500
+        line-height: 1.5rem
+        display: flex
+
+        .icon
+            margin-right: 1.125rem
+
+    &__top
+        display: flex
+        justify-content: space-between
+
+    &__tabs
+        display: flex
+        padding: 0 .5rem
+
+        @media screen and (max-width: $mobile-width)
+            padding: 0 8px
+            height: 56px
+            align-items: center
+
+        &-item
+            line-height: 1.5rem
+            margin: 0 1rem
+            display: flex
+            padding: 1.125rem 0 calc(1.125rem - 2px)
+            border-bottom: 2px solid transparent
+            color: $color-font-mute !important
+
+            @media screen and (max-width: $mobile-width)
+                font:
+                    weight: 500
+                    size: 13px
+                line-height: 24px
+                height: 100%
+                margin: 0 8px
+
+
+            &_active
+                border-bottom: 2px solid $color-primary
+                color: $color-primary !important
+
+    &__actions
+        display: flex
+        align-items: center
+
+        @media screen and (max-width: $mobile-width)
+            width: 40%
+            justify-content: flex-end
+
+    &__content
+        flex-grow: 1
+
+    .mobile-table
+        border: 1px solid $color-border
+        border-radius: 4px
+
+        &__item
+            padding: 16px
+            border-bottom: 1px solid $color-border
+
+            &:last-child
+                border-bottom: 0
+
+        &__field
+            display: flex
+            font-size: 13px
+            line-height: 24px
+
+        &__key
+            color: $color-font-mute
+
+        &__value
+            color: $color-primary
+            margin-left: 8px
+
+        &_variant
+            padding: 16px
+            border: none
+            border-top: 1px solid $color-border
+
+            .mobile-table__item
+                border: none
+                border-bottom: 1px solid $color-border
+                padding: 16px 0
+
+                &:first-child
+                    padding-top: 0
+
+            .mobile-table__title
+                font:
+                    size: 13px
+                    weight: 500
+                line-height: 24px
+                color: #262C40
+            
+            .mobile-table__field
+                display: flex
+                justify-content: space-between
+                line-height: 24px
+                color: $color-font-mute
+                margin-top: 8px
+
+                &_column
+                    flex-direction: column
+
+                    .mobile-table__value
+                        margin-left: 0
+
+            .mobile-table__value
+                span
+                    color: $color-font
+                input
+                    border: none
+                    text-align: right
+                    color: $color-font-mute
+
+                    &:focus
+                        outline: none
+
+            .mobile-table__item-footer
+                display: flex
+                margin-top: 10px
+
+                .button
+                    width: 100%
+                    margin-left: 8px
+
+                    &:first-child
+                        margin-left: 0
