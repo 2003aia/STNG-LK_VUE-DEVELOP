@@ -2,11 +2,11 @@
 .agreements-address.layout
     loading(getter="is_loading" v-if="is_loading" class="layout__main")
     .layout__main(v-else)
-        Back(:goto="`/agreements`" v-if="!isMobile")
+        Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
 
         //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
-        //- .layout__title Оплата [{{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} | {{getCurrent.objects[0].object + ' ' + getCurrent.objects[0].objectId | capitalize }}]
-        .layout__title Оплата [{{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} 
+        .layout__title Оплата [{{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} | {{object.object + ' ' + $route.params.address | capitalize }}]
+        //- .layout__title Оплата {{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} 
         
         div(:style="{margin:isMobile?'0 -16px':'0 -24px'}")
             .agreements-address__actions
@@ -42,8 +42,11 @@ export default {
         getCurrent () {
             return this.$store.getters.getCurrentAgreement;
         },
+        // object () {
+        //     return this.$store.getters.getCurrentObject;
+        // },
         object () {
-            return this.$store.getters.getCurrentObject;
+            return this.$store.getters.getCurrentAgreement.objects.find((el)=>el.objectId===this.$route.params.address)
         },
         is_loading() {
             return this.$store.getters.is_loading
@@ -53,7 +56,7 @@ export default {
         return {
             load: false,
         }
-    }
+    },
 }
 </script>
 

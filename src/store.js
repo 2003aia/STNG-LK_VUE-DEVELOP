@@ -88,7 +88,7 @@ export default new Vuex.Store({
         },
     },
     actions: {
-        getBills: async ({ commit, dispatch, state }) => {
+        getBills: async ({ commit, dispatch, state },agreementId) => {
             if (state.user.isLoggedIn) {
                 console.log("Получаем счета с сервера...");
 
@@ -104,20 +104,21 @@ export default new Vuex.Store({
                 //     body: formData
                 // });
 
-                const fetchBills = await fetch('https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=4d92be8d-79ae-47a3-83f6-ed85665a2cc4', {
+                const fetchBills = await fetch(`https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=${state.user.token}`, {
                     mode: "cors",
                     method: "get",
                     //     body: formData
                 })
 
                 try {
-                    if (fetchBills.ok) {
+                    if (fetchBills.ok && agreementId) {
                         const jsonBills = await fetchBills.json();
                         console.log(
                             "Получили счета:",
                             jsonBills.data
                         );
-                        commit("setBills", jsonBills.data);
+                        const data = jsonBills.data.find((el)=>el.agreement.id===agreementId )
+                        commit("setBills", [data]);
                     } else {
                         console.error("Error:", fetchBills.json().error);
                     }
@@ -205,18 +206,17 @@ export default new Vuex.Store({
             console.log("Получаем токен из сервера...");
 
 
-            const res = await fetch(`https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history?token`, {
+            const res = await fetch(`https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history`, {
                 mode: "cors",
                 method: "post",
                 body: JSON.stringify({
-                    token: '4d92be8d-79ae-47a3-83f6-ed85665a2cc4',
+                    token: state.user.token,
                 })
             });
 
             if (res.ok) {
                 const json = await res.json();
                 if (json.error === false) {
-                    console.log(json.data, 'testtest////////////')
                     commit('getServicesRequests', json.data)
 
                 } else {
@@ -318,66 +318,79 @@ export default new Vuex.Store({
             }
         },
         getObjects: async ({ commit, state }, agreementId) => {
-            commit("setLoading", true);
+            // commit("setLoading", true);
+            if (agreementId /* router.currentRoute.params.id */) {
+                const currentAgreement = state.agreements.find(
+                    item =>
+                        item.id === agreementId/* router.currentRoute.params.id */
+                );
+                console.log(
+                    "Найден ID-договора, текущий договор:",
+                    currentAgreement
+                );
 
-            console.log(`Получаем адреса для ${agreementId} из сервера...`);
 
-            const formData = new FormData();
-
-            formData.append("method", API_METHOD);
-            formData.append("method_connect", "objects");
-            formData.append(
-                "get",
-                `token=${state.user.token}&agreementId=${agreementId}`
-            );
-
-            const res = await fetch(API_URL, {
-                mode: "cors",
-                method: "post",
-                body: formData
-            });
-
-            if (res.ok) {
-                const json = await res.json();
-
-                if (json.response.msg.error === false) {
-                    console.log(
-                        "Получили адреса из сервера:",
-                        json.response.msg.data
-                    );
-
-                    // set current agreement
-                    if (router.currentRoute.params.id) {
-                        const currentAgreement = state.agreements[
-                            "agreements"
-                        ].find(
-                            item => item.id === router.currentRoute.params.id
-                        );
-                        console.log(
-                            "Найден ID-договора, текущий договор:",
-                            currentAgreement
-                        );
-                        commit("setCurrentAgreement", currentAgreement);
-                    }
-
-                    // set current object
-                    if (router.currentRoute.params.address) {
-                        const currentObject = json.response.msg.data.find(
-                            item =>
-                                item.objectid ===
-                                router.currentRoute.params.address
-                        );
-                        console.log(
-                            "Найден адрес, текущий объект:",
-                            currentObject
-                        );
-                        commit("setCurrentObject", currentObject);
-                    }
-
-                    commit("setObjects", json.response.msg.data);
-                }
+                commit("setCurrentAgreement", currentAgreement);
             }
-            commit("setLoading", false);
+            // commit("setLoading", false);
+            // console.log(`Получаем адреса для ${agreementId} из сервера...`);
+
+            // const formData = new FormData();
+
+            // formData.append("method", API_METHOD);
+            // formData.append("method_connect", "objects");
+            // formData.append(
+            //     "get",
+            //     `token=${state.user.token}&agreementId=${agreementId}`
+            // );
+
+            // const res = await fetch(API_URL, {
+            //     mode: "cors",
+            //     method: "post",
+            //     body: formData
+            // });
+
+            // if (res.ok) {
+            //     const json = await res.json();
+
+            //     if (json.response.msg.error === false) {
+            //         console.log(
+            //             "Получили адреса из сервера:",
+            //             json.response.msg.data
+            //         );
+
+            //         // set current agreement
+            //         if (router.currentRoute.params.id) {
+            //             const currentAgreement = state.agreements[
+            //                 "agreements"
+            //             ].find(
+            //                 item => item.id === router.currentRoute.params.id
+            //             );
+            //             console.log(
+            //                 "Найден ID-договора, текущий договор:",
+            //                 currentAgreement
+            //             );
+            //             commit("setCurrentAgreement", currentAgreement);
+            //         }
+
+            //         // set current object
+            //         if (router.currentRoute.params.address) {
+            //             const currentObject = json.response.msg.data.find(
+            //                 item =>
+            //                     item.objectid ===
+            //                     router.currentRoute.params.address
+            //             );
+            //             console.log(
+            //                 "Найден адрес, текущий объект:",
+            //                 currentObject
+            //             );
+            //             commit("setCurrentObject", currentObject);
+            //         }
+
+            //         commit("setObjects", json.response.msg.data);
+            //     }
+            // }
+            // commit("setLoading", false);
         },
         logoutUser: ctx => {
             console.log("Завершаем сеанс...");

@@ -119,7 +119,7 @@ export default {
         }
     },
     mounted(){
-        console.log('mounted',this.$route.params.id )
+        this.$store.dispatch('getBills', this.$route.params.id);
     }
 }
 </script>

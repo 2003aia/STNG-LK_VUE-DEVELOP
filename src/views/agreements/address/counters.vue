@@ -100,10 +100,10 @@ export default {
         },
     },
     mounted() {
-        let counters = this.getCounters.objects[0].counters
+        let counters = this.getCounters.objects.find((el)=>el.objectId === this.$route.params.address)
 
         if (counters) {
-            for (let counter of counters) {
+            for (let counter of counters.counters) {
                 this.records.push(
                     {
                         counterId: counter.counter,
