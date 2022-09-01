@@ -2,18 +2,19 @@
 .agreements-address.layout
     loading(getter="is_loading" v-if="is_loading" class="layout__main")
     .layout__main(v-else)
-        Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
+        //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
+        Back(:goto="!$route.path.includes('/bills')? `/agreements/${$route.params.id}`: `/agreements/`" v-if="!isMobile")
 
         //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
-        .layout__title Оплата [{{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} | {{object.object + ' ' + $route.params.address | capitalize }}]
+        .layout__title Оплата [{{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} {{'|' +object[0]?.object ? object[0]?.object : '' + ' ' + $route.params?.address ? $route.params?.address : '' | capitalize }}]
         //- .layout__title Оплата {{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} 
         
         div(:style="{margin:isMobile?'0 -16px':'0 -24px'}")
             .agreements-address__actions
                 .layout__tabs
-                    router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}/counters`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-counters'}") Показания счетчиков
+                    router-link.layout__tabs-item(v-if="!$route.params.id.includes('/bills')" :to="`/agreements/${$route.params.id}/${$route.params.address}/counters`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-counters'}") Показания счетчиков
                     //router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-pay'}") Оплата
-                    router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}/bills`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-bills'}") Счета
+                    router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.id}/bills`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-bills'}") Счета
                     
                 .layout__actions
                     a(href="#") Загрузить показания в Excel
@@ -37,6 +38,7 @@
 import {
     Back, Loading
 } from '@/components'
+
 import DatePicker from 'vue2-datepicker'
 
 
@@ -47,7 +49,7 @@ export default {
     },
     async created() {
         this.load = false;
-        await this.$store.dispatch('getObjects', this.$route.params.id);
+        await this.$store.dispatch('getObjects', this.$route.params?.id);
         this.load = true;
     },
     computed: {
@@ -61,7 +63,7 @@ export default {
         //     return this.$store.getters.getCurrentObject;
         // },
         object () {
-            return this.$store.getters.getCurrentAgreement.objects.find((el)=>el.objectId===this.$route.params.address)
+            return this.$store.getters.getCurrentAgreement.objects.filter((el)=>el.objectId===this.$route.params.address)
         },
         is_loading() {
             return this.$store.getters.is_loading
@@ -70,11 +72,14 @@ export default {
     data() {
         return {
             load: false,
+            objectId: [],
             filter: {
                 date: ''
             }
         }
     },
+    mounted(){
+    }
 }
 </script>
 

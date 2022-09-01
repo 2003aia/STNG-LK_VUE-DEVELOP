@@ -10,7 +10,7 @@
             .history__table-cell(style="width: 60%") Задолженность
             .history__table-cell(style="width: 60%") Введите сумму
             .history__table-cell Действия
-        .history__table-row(v-for="bill in getBills" :key="bill.id")
+        .history__table-row(v-for="bill in bills" :key="bill.id")
             .history__table-cell(style="width: 60%") {{ bill.number }}
             .history__table-cell(style="width: 60%") {{ formatDate(bill.date) }}
             .history__table-cell(style="width: 60%") {{ formatPrice(bill['summ']) }}
@@ -22,7 +22,7 @@
                     .bills-pay__pay
                         Button(size="small") Оплатить
                     .bills-pay__print
-                        a(:href="getPDFFile" download)
+                        a(:href="getPDFFile" :download="bill.agreement.id")
                             Button(size="small" variety="secondary") Распечатать счет
 
     .mobile-table.mobile-table_variant(v-if="isMobile")
@@ -64,6 +64,7 @@ export default {
     },
     data () {
         return {
+            bills: [],
             gas: {
                 label: 'Сетевой газ',
                 debt: 760,
@@ -123,7 +124,9 @@ export default {
         }
     },
     mounted(){
-        this.$store.dispatch('getBills', this.$route.params.id);
+        
+        this.$data.bills = this.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
+    
         this.$store.dispatch('getPDFFile').then(()=>{
             console.log(this.$store.getters.getPDFFile, 'getpdfFilemounteddd')
         })

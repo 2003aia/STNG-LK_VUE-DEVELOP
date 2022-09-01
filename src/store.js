@@ -119,11 +119,11 @@ export default new Vuex.Store({
           if (fetchBills.ok) {
             const jsonBills = await fetchBills.json();
             console.log("Получили счета:", jsonBills.data);
-            const data = jsonBills.data.find(
-              (el) => el.agreement.id === agreementId
-            );
-            console.log(data, "testt");
-            commit("setBills", [data]);
+            // const data = jsonBills.data.find(
+            //   (el) => el.agreement.id === agreementId
+            // );
+            // console.log(data, "testt");
+            commit("setBills", jsonBills.data);
           } else {
             console.error("Error:", fetchBills.json().error);
           }

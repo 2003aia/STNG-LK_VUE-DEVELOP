@@ -9,7 +9,9 @@
                 a.agreements-addresses__download-link(href="#") Скачать шаблон загрузки данных
         .agreements-addresses__list
             .agreements-addresses__item(v-for="address of addresses")
-                .agreements-addresses__item-title {{address.object + ' ' + address.objectId | capitalize }}
+                //- .agreements-addresses__item-title {{address.object + ' ' + address.objectId | capitalize }}
+                .agreements-addresses__item-title {{address.object + ' ' | capitalize }}
+
                 .agreements-addresses__item-actions
                     Button(:to="`/agreements/${getCurrent.id}/${address.objectId}/counters`" :onClick="()=>$router.push({name: 'agreements-address-counters', params: address})" size="small" v-if="!getAgreements.typeenterindication") Внести показания
                     Button(:to="`/agreements/${getCurrent.id}/${address.objectId}`" variety="white" size="small") Оплата по показаниям

@@ -326,7 +326,7 @@ export default {
                 }
                 await this.$store.dispatch('authUser', userObject)
                     .then(res => {
-                        // $router.push('/agreements')
+                        this.$router.push('/agreements/')
                         this.errors.push(res)
                     })
 

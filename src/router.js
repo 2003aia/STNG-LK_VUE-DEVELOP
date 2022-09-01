@@ -122,7 +122,8 @@ const router = new VueRouter({
                         },
                         {
                             name: "agreements-address-bills",
-                            path: ":address/bills",
+                            // path: ":address/bills",
+                            path: ":id/bills",
                             component: AgreementsAddressBills
                         }
                     ]
