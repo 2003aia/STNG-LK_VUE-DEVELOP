@@ -1,9 +1,9 @@
 <template lang="pug">
-//- (v-if="!isMobile")
+
 .agreements-address-pay
     //- span test
     
-    .history__table
+    .history__table(v-if="!isMobile")
         .history__table-row.history__table-row_heading
             .history__table-cell(style="width: 60%") № счета
             .history__table-cell(style="width: 60%") Дата

@@ -1,8 +1,8 @@
 <template lang="pug">
-//- (v-if="!isMobile")
+
 .agreements-address-counter
 
-    .history__table
+    .history__table(v-if="!isMobile")
         .history__table-row.history__table-row_heading
             .history__table-cell № счетчика
             .history__table-cell Показания счетчика
@@ -77,6 +77,7 @@ export default {
             }
 
             if (is_can) {
+                console.log('testtdddddddd')
                 this.$store.dispatch('sendIndication', this.records).then(res => {
                     this.notice = res;
                 })
@@ -107,6 +108,7 @@ export default {
                 this.records.push(
                     {
                         counterId: counter.counter,
+                        counterNumber: counter.Id,
                         value: '',
                         old_indication: counter.Indication,
                         date: counter.dateEnd,

@@ -20,6 +20,8 @@
                     span {{ agreement.type }}
                 template(v-slot:footer)
                     Button(variety="white" :to="`/agreements/${agreement.id}`") Адреса
+                    //- Button(variety="white" :to="`/bills/history/`") Адреса
+
                     Button(variety="primary-light" :to="`/agreements/${agreement.id}/`") Внести показания
                     Button(variety="primary-light" :to="`/agreements/${agreement.id}/`" v-if="!isMobile") История
                     Button(variety="primary-light-outline" v-if="!isMobile") Удалить

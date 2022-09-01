@@ -26,7 +26,7 @@
         td {{ item.statys }}
         td {{ item.receiptDate }}
         td {{ item.dueDate }}
-        td {{ item.case }}
+        td {{`№${ item.number }  ${item.date}`}}
         td {{ item.comment }}
         td
           .services-requests__agreement(v-if="item.agreement", @click="sign")
