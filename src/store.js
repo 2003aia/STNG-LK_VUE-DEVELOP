@@ -20,7 +20,7 @@ export default new Vuex.Store({
       isLoggedIn: false,
     },
     bills: {},
-    agreements: {},
+    agreements: [],
     profile: null,
     history: [],
     services: [],
@@ -408,9 +408,9 @@ export default new Vuex.Store({
     //     ctx.commit('setCurrentObject', res)
     // },
     getPDFFile: async (ctx, data) => {
-      console.log("pdffile ");
+      console.log("pdf file id/", data);
       const res = await fetch(
-        `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoice_image?token=${ctx.state.user.token}&id=${router.currentRoute.params.id}`,
+        `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoice_image?token=${ctx.state.user.token}&id=${data}`,
         {
           mode: "cors",
           method: "get",

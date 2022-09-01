@@ -22,7 +22,7 @@
                     .bills-pay__pay
                         Button(size="small") Оплатить
                     .bills-pay__print
-                        a(:href="getPDFFile" :download="bill.agreement.id")
+                        a(:href="getPDFFile" @click="getPDFId(bill.id)" :download="bill.id")
                             Button(size="small" variety="secondary") Распечатать счет
 
     .mobile-table.mobile-table_variant(v-if="isMobile")
@@ -64,7 +64,9 @@ export default {
     },
     data () {
         return {
+            pdf: [],
             bills: [],
+            billId: '',
             gas: {
                 label: 'Сетевой газ',
                 debt: 760,
@@ -111,6 +113,12 @@ export default {
                 (this.fines.toPay === '' ? 0 : +this.fines.toPay) + 
                 (this.connect.toPay === '' ? 0 : +this.connect.toPay)
         },
+        getPDFId (id) {
+            // console.log(id, 'input pdf')
+            this.$store.dispatch('getPDFFile', id).then(()=>{
+            })
+        }
+       
     },
     computed: {
         isMobile () {
@@ -126,10 +134,14 @@ export default {
     mounted(){
         
         this.$data.bills = this.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
-    
-        this.$store.dispatch('getPDFFile').then(()=>{
-            console.log(this.$store.getters.getPDFFile, 'getpdfFilemounteddd')
-        })
+        
+       /*  this.$data.bills.forEach((el)=>{
+            this.$store.dispatch('getPDFFile', el.id).then(()=>{
+                this.$data.pdf.push(this.$store.getters.getPDFFile)
+                console.log(this.$data.pdf,'getpdfFilemounteddd')
+            })
+        }) */
+        
 
     }
 }
