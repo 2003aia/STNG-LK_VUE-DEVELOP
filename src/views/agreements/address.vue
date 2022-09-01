@@ -47,7 +47,7 @@ export default {
     },
     async created() {
         this.load = false;
-        // ?await this.$store.dispatch('getObjects', this.$route.params.id);
+        await this.$store.dispatch('getObjects', this.$route.params.id);
         this.load = true;
     },
     computed: {

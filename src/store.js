@@ -29,6 +29,7 @@ export default new Vuex.Store({
     overlay: false,
     objects: {},
     currentAgreement: {},
+    pdfFile: null,
     currentObject: {},
     is_loading: true,
     passwordRecoverySent: null,
@@ -74,6 +75,9 @@ export default new Vuex.Store({
     },
     setCurrentAgreement: (state, object = {}) => {
       state.currentAgreement = object;
+    },
+    setPDFFile: (state, object) => {
+      state.pdfFile = object;
     },
     setCurrentObject: (state, object = {}) => {
       state.currentObject = object;
@@ -403,6 +407,28 @@ export default new Vuex.Store({
     //     const res = JSON.parse(JSON.stringify(currentObjects)).find(item => item.objectid === currentId)
     //     ctx.commit('setCurrentObject', res)
     // },
+    getPDFFile: async (ctx, data) => {
+      console.log("pdffile ");
+      const res = await fetch(
+        `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoice_image?token=${ctx.state.user.token}&id=${router.currentRoute.params.id}`,
+        {
+          mode: "cors",
+          method: "get",
+        }
+      );
+
+      if (res.ok) {
+        const json = await res.json();
+
+        if (json.error === false) {
+          ctx.commit("setPDFFile", json.data);
+
+          console.log("Получен pdf file");
+        }
+        return json;
+      }
+      console.log("Ошибка отправки запроса: -> getPDFFile");
+    },
     sendIndication: async (ctx, data) => {
       ctx.commit("setLoading", true);
 
@@ -412,21 +438,21 @@ export default new Vuex.Store({
 
       const objects = JSON.parse(JSON.stringify(data));
 
-    //   for (let i = 0; i < objects.length; i++) {
-    //     let counter = objects[i];
-    //     if (counter["value"]) {
-    //       obj.counters.push({
-    //         counterId: counter["counterId"],
-    //         value: +counter["value"],
-    //       });
-    //     }
-    //   }
+      //   for (let i = 0; i < objects.length; i++) {
+      //     let counter = objects[i];
+      //     if (counter["value"]) {
+      //       obj.counters.push({
+      //         counterId: counter["counterId"],
+      //         value: +counter["value"],
+      //       });
+      //     }
+      //   }
       const json_string = JSON.stringify(obj.counters);
 
       console.log("Отправляем показания:", json_string);
 
       const formData = new FormData();
-    //   console.log(objects, 'objects ////////')
+      //   console.log(objects, 'objects ////////')
       formData.append("method", API_METHOD);
       formData.append("method_connect", "objects");
       formData.append("get", `token=${ctx.state.user.token}`);
@@ -450,8 +476,8 @@ export default new Vuex.Store({
             ],
           },
         ],
-      }
-      console.log(indicationsData, 'indications data')
+      };
+      console.log(indicationsData, "indications data");
 
       const res = await fetch(
         "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_indications",
@@ -488,7 +514,7 @@ export default new Vuex.Store({
           ctx.commit("setLoading", false);
           await ctx.dispatch("getAgreements");
 
-        //   await ctx.dispatch("getObjects", router.currentRoute.params.id);
+          //   await ctx.dispatch("getObjects", router.currentRoute.params.id);
           return "Показания отправлены на сервер.";
         }
 
@@ -506,6 +532,7 @@ export default new Vuex.Store({
     getAgreements: (state) => state.agreements,
     getObjects: (state) => state.objects,
     getCurrentAgreement: (state) => state.currentAgreement,
+    getPDFFile: (state) => state.pdfFile,
     getCurrentObject: (state) => state.currentObject,
     is_loading: (state) => state.is_loading,
   },

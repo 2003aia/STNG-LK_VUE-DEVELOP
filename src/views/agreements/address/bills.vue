@@ -22,7 +22,8 @@
                     .bills-pay__pay
                         Button(size="small") Оплатить
                     .bills-pay__print
-                        Button(size="small" variety="secondary") Распечатать счет
+                        a(:href="getPDFFile" download)
+                            Button(size="small" variety="secondary") Распечатать счет
 
     .mobile-table.mobile-table_variant(v-if="isMobile")
         .mobile-table__item
@@ -108,7 +109,7 @@ export default {
                 (this.stadeDuty.toPay === '' ? 0 : +this.stadeDuty.toPay) + 
                 (this.fines.toPay === '' ? 0 : +this.fines.toPay) + 
                 (this.connect.toPay === '' ? 0 : +this.connect.toPay)
-        }
+        },
     },
     computed: {
         isMobile () {
@@ -116,10 +117,17 @@ export default {
         },
         getBills () {
             return this.$store.getters.getBills/* .find(bill => bill.id === this.$route.params.id); */
+        },
+        getPDFFile () {
+            return this.$store.getters.getPDFFile
         }
     },
     mounted(){
         this.$store.dispatch('getBills', this.$route.params.id);
+        this.$store.dispatch('getPDFFile').then(()=>{
+            console.log(this.$store.getters.getPDFFile, 'getpdfFilemounteddd')
+        })
+
     }
 }
 </script>
