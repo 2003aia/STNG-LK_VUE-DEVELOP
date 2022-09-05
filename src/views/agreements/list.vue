@@ -25,6 +25,9 @@
                 template(v-slot:client) {{ getBills.name }}
                 template(v-slot:bill) Вид договора: 
                     span {{ agreement.type }}
+                template(v-slot:bill2)
+                    span Имя контрагента: 
+                    span {{ name }}   
                 template(v-slot:footer)
                     Button(variety="white" :to="`/agreements/${agreement.id}`") Адреса
                     //- Button(variety="white" :to="`/bills/history/`") Адреса
@@ -77,6 +80,7 @@ import {
     Button,
     Loading
 } from '@/components'
+import Vue from 'vue'
 
 export default {
     name: 'AgreementsList',
@@ -104,6 +108,9 @@ export default {
     computed: {
         isMobile () {
             return screen.width < 760
+        },
+        name() {
+            return Vue.cookie.get('contrName')
         },
         getBills () {
             try {

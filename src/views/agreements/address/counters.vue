@@ -111,8 +111,16 @@ export default {
   mounted() {
     let counters = this.getCounters.objects.filter(
       (el) =>
-        el.objectId === this.$route.params.address || Vue.cookie.get("objectId") 
+        el.objectId ===
+        this.$route.params
+          .address 
     );
+    if (counters.length == 0) {
+      counters = this.getCounters.objects.filter(
+        (el) => el.objectId === Vue.cookie.get("objectId")
+      );
+    }
+    console.log(counters, "test");
     this.$data.objectId = Vue.cookie.get("objectId");
     let test = false;
 
@@ -146,9 +154,9 @@ export default {
 
 .agreements-address-counter
 .notice
-    padding: 24px 24px 0
-    color: #3F64A9
-    p
-        margin: 0
-        font-size: 14px
+  padding: 24px 24px 0
+  color: #3F64A9
+  p
+    margin: 0
+    font-size: 14px
 </style>

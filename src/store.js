@@ -281,6 +281,9 @@ export default new Vuex.Store({
             Vue.cookie.set("token", json.data.token, {
               expires: "2h",
             });
+            Vue.cookie.set("contrName", json.data.name, {
+              expires: "2h",
+            });
             ctx.commit("setUser", json.data.token);
             console.log("set token: ", json.data.token);
           } else {

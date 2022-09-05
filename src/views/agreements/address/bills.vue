@@ -19,7 +19,7 @@
                 span(v-if="bill['summ'] === 0") {{ formatPrice(0) }}
             .history__table-cell
                 div(style="display:flex;align-items:center;height: 100%;")
-                    .bills-pay__pay
+                    //- .bills-pay__pay
                         Button(size="small") Оплатить
                     .bills-pay__print
                         a(:href="getPDFFile" @click="getPDFId(bill.id)" :download="bill.id")

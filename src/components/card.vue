@@ -16,6 +16,8 @@
             slot(name="client")
         .card__content-bill(v-if="$slots.bill")
             slot(name="bill")
+        .card__content-bill(v-if="$slots.bill")
+            slot(name="bill2")    
     .card__footer(v-if="$slots.footer")
         slot(name="footer")
 </template>
