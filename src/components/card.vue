@@ -10,7 +10,8 @@
         img(src="@/assets/images/dots.svg")
     slot(name="card")
     .card__title {{ title }}
-    .card__subtitle {{contrName}}
+    .card__subtitle Имя контрагента:  
+        span {{contrName}} 
     .card__content
         slot
         .card__content-client(v-if="$slots.client")
@@ -126,7 +127,9 @@ export default {
         @media screen and (max-width: $mobile-width)
             font-size: 16px
     &__subtitle
-        color: #fff
+        // color: #fff
+        color: $color-font-mute-light
+
         margin-bottom: .5rem
         font:
             size: .8125rem
@@ -135,7 +138,8 @@ export default {
 
         @media screen and (max-width: $mobile-width)
             font-size: 16px
-
+        span
+            color: #fff
     &__content
         color: $color-font-mute-light
         font:
