@@ -1,84 +1,138 @@
 <template lang="pug">
-.layout.services.layout_column(:class="{'services_form': $route.name === 'services-form' || $route.name === 'services-request'}")
-    .layout__top(v-if="$route.name !== 'services-request' && $route.name !== 'services-form'")
-        .layout__tabs
-            //- router-link.layout__tabs-item(to="/services" :class="{'layout__tabs-item_active': $route.name === 'services'}") Услуги
-            router-link.layout__tabs-item(to="/services/requests" :class="{'layout__tabs-item_active': $route.name === 'services-requests'}") Мои заявки
-        .layout__actions(v-if="$route.name === 'services'")
-            .services__search
-                .services__search-input
-                    input(v-model="search" placeholder="Найти услугу")
-                .services__search-icon
-                    Icon(icon="search" color="font-mute-variant")
-    .layout__content
-        div(v-if="$route.name === 'services'")
-            .services__categories
-                .services__category(
-                    v-for="(category, categoryIndex) in categories"
-                    :key="categoryIndex"
-                    @click="selectedCategory = categoryIndex"
-                    :class="{'services__category_active': selectedCategory === categoryIndex}"
-                ) {{ category }}
-            .services__list(v-if="selectedCategory === 0")
-                .services__item(
-                    v-for="(item, itemIndex) in list"
-                    :key="itemIndex"
-                )
-                    .services__item-title {{ item.name }}
-                    .services__item-description {{ item.description }}
-                    .services__item-footer
-                        Button(to="services/request") Подать заявку
-                        div(style="display:flex;align-items:center")
-                            .services__item-meta Срок:
-                                span {{ item.time }}
-                            .services__item-meta Цена:
-                                span {{ formatCurrency(item.price) }}
-        router-view(v-if="$route.name !== 'services'")
+.layout.services.layout_column(
+  :class="{ services_form: $route.name === 'services-form' || $route.name === 'services-request' }"
+)
+  .layout__top(
+    v-if="$route.name !== 'services-request' && $route.name !== 'services-form'"
+  )
+    .layout__tabs
+      //- router-link.layout__tabs-item(to="/services" :class="{'layout__tabs-item_active': $route.name === 'services'}") Услуги
+      router-link.layout__tabs-item(
+        to="/services/requests",
+        :class="{ 'layout__tabs-item_active': $route.name === 'services-requests' }"
+      ) Мои заявки
+      .bills-history__date-filter
+        .bills-history__date-filter-input
+          date-picker(
+            v-model="periodHandler",
+            :editable="false",
+            :clearable="true",
+            :format="isMobile ? 'DD.MM' : 'DD.MM.YYYY'",
+            :range="true",
+            placeholder="Выбрать период",
+            :class="{ datepicker_filled: filter.date }"
+          )
+        .bills-history__date-filter-icon
+          img(src="@/assets/images/calendar.svg")
+    .layout__actions(v-if="$route.name === 'services'")
+      .services__search
+        .services__search-input
+          input(v-model="search", placeholder="Найти услугу")
+        .services__search-icon
+          Icon(icon="search", color="font-mute-variant")
+  .layout__content
+    div(v-if="$route.name === 'services'")
+      .services__categories
+        .services__category(
+          v-for="(category, categoryIndex) in categories",
+          :key="categoryIndex",
+          @click="selectedCategory = categoryIndex",
+          :class="{ services__category_active: selectedCategory === categoryIndex }"
+        ) {{ category }}
+      .services__list(v-if="selectedCategory === 0")
+        .services__item(v-for="(item, itemIndex) in list", :key="itemIndex")
+          .services__item-title {{ item.name }}
+          .services__item-description {{ item.description }}
+          .services__item-footer
+            Button(to="services/request") Подать заявку
+            div(style="display: flex; align-items: center")
+              .services__item-meta Срок:
+                span {{ item.time }}
+              .services__item-meta Цена:
+                span {{ formatCurrency(item.price) }}
+    router-view(v-if="$route.name !== 'services'")
 </template>
 
 <script>
-import {
-    Icon, Button
-} from '@/components'
+import { Icon, Button } from "@/components";
+import DatePicker from "vue2-datepicker";
+import axios from "axios";
+import Vue from "vue";
 
 export default {
-    name: 'Services',
-    data () {
-        return {
-            search: '',
-            list: [],
-            categories: [
-                'Разовые услуги', 'Технологическое присоединение (ТП)'
-            ],
-            selectedCategory: 0
-        }
+  name: "Services",
+  data() {
+    return {
+      search: "",
+      list: [],
+      categories: ["Разовые услуги", "Технологическое присоединение (ТП)"],
+      selectedCategory: 0,
+      filter: {
+        date: "",
+      },
+      periodHandler: "",
+    };
+  },
+  methods: {
+    formatCurrency: (value) => {
+      return (
+        value.toLocaleString("ru-RU", { minimumFractionDigits: 2 }) + " руб."
+      );
     },
-    methods: {
-        formatCurrency: value => {
-            return value.toLocaleString('ru-RU', { minimumFractionDigits: 2 }) + ' руб.'
-        }
+  },
+  computed: {
+    isMobile() {
+      return screen.width < 760;
     },
-    watch: {
-        search (value) {
-            if (value) {
-                let list = this.$store.state.services
-                this.list = list.filter(item => {
-                    return item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1 ||
-                    item.description.toLowerCase().indexOf(value.toLowerCase()) !== -1
-                })
-            } else {
-                this.list = this.$store.state.services
-            }
-        }
+  },
+  watch: {
+    search(value) {
+      if (value) {
+        let list = this.$store.state.services;
+        this.list = list.filter((item) => {
+          return (
+            item.name.toLowerCase().indexOf(value.toLowerCase()) !== -1 ||
+            item.description.toLowerCase().indexOf(value.toLowerCase()) !== -1
+          );
+        });
+      } else {
+        this.list = this.$store.state.services;
+      }
     },
-    mounted () {
-        this.$store.dispatch('getServices')
-        this.list = this.$store.state.services
+    periodHandler(value) {
+      let beginPeriod = value[0]
+        .toLocaleDateString("en-ZA")
+        .replace("/", "")
+        .replace("/", "");
+      let endPeriod = value[1]
+        .toLocaleDateString("en-ZA")
+        .replace("/", "")
+        .replace("/", "");
+        
+        this.$store.dispatch("getServicesRequests", value)
+    //   axios
+    //     .get(
+    //       `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history?token=${Vue.cookie.get(
+    //         "token"
+    //       )}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`
+    //     )
+    //     .then((res) => {
+    //       if (res.status === 200) {
+    //         console.log(res.data.data, "begin test");
+    //       }
+    //     });
     },
-    components: {
-        Icon, Button
-    }
-}
+  },
+  mounted() {
+    this.$store.dispatch("getServices");
+    this.list = this.$store.state.services;
+  },
+  components: {
+    Icon,
+    Button,
+    DatePicker,
+  },
+};
 </script>
 
 <style lang="sass">
@@ -118,7 +172,7 @@ export default {
 
                 &::placeholder
                     color: $color-font-mute-variant
-                
+
                 &:focus
                     outline: none
 
@@ -139,7 +193,6 @@ export default {
         @media screen and (max-width: $mobile-width)
             padding: 0 8px
             overflow-x: auto
-
 
     &__category
         color: $color-font-mute-light
@@ -192,7 +245,7 @@ export default {
 
             @media screen and (max-width: $mobile-width)
                 font-size: 13px
-        
+
         &-footer
             margin-top: 1rem
             display: flex

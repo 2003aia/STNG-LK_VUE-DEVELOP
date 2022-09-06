@@ -90,7 +90,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    getBills: async ({ commit, dispatch, state }, agreementId) => {
+    getBills: async ({ commit, dispatch, state }, data) => {
       if (state.user.isLoggedIn) {
         console.log("Получаем счета с сервера...");
 
@@ -105,15 +105,33 @@ export default new Vuex.Store({
         //     method: "post",
         //     body: formData
         // });
+        let fetchBills
+        if (data) {
+          let beginPeriod = data[0]
+            .toLocaleDateString("en-ZA")
+            .replace("/", "")
+            .replace("/", "");
+          let endPeriod = data[1]
+            .toLocaleDateString("en-ZA")
+            .replace("/", "")
+            .replace("/", "");
+          fetchBills = await fetch(
+            `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=${state.user.token}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`,
+            {
+              mode: "cors",
+              method: "get",
+            }
+          );
+        } else {
+          fetchBills = await fetch(
+            `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=${state.user.token}`,
+            {
+              mode: "cors",
+              method: "get",
+            }
+          );
+        }
 
-        const fetchBills = await fetch(
-          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=${state.user.token}`,
-          {
-            mode: "cors",
-            method: "get",
-            //     body: formData
-          }
-        );
 
         try {
           if (fetchBills.ok) {
@@ -203,23 +221,40 @@ export default new Vuex.Store({
     getServices: (ctx) => {
       ctx.commit("getServices");
     },
-    getServicesRequests: async ({ commit, state }) => {
-      console.log("Получаем токен из сервера...");
+    getServicesRequests: async ({ commit, state }, data) => {
+      console.log("Получаем токен из сервера...", data);
+      let res
+      if (data) {
+        let beginPeriod = data[0]
+          .toLocaleDateString("en-ZA")
+          .replace("/", "")
+          .replace("/", "");
+        let endPeriod = data[1]
+          .toLocaleDateString("en-ZA")
+          .replace("/", "")
+          .replace("/", "");
+        res = await fetch(
+          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history?token=${state.user.token}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`,
+          {
+            mode: "cors",
+            method: "get",
+          }
+        );
+      } else {
+        res = await fetch(
+          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history?token=${state.user.token}`,
+          {
+            mode: "cors",
+            method: "get",
+          }
+        );
+      }
 
-      const res = await fetch(
-        `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history`,
-        {
-          mode: "cors",
-          method: "post",
-          body: JSON.stringify({
-            token: state.user.token,
-          }),
-        }
-      );
 
       if (res.ok) {
         const json = await res.json();
         if (json.error === false) {
+          console.log(json.data, 'testtest')
           commit("getServicesRequests", json.data);
         } else {
           return json;

@@ -1,93 +1,108 @@
 <template lang="pug">
 .agreements-address.layout
-    loading(getter="is_loading" v-if="is_loading" class="layout__main")
-    .layout__main(v-else)
-        //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
-        Back(:goto="!$route.path.includes('/bills')? `/agreements/${$route.params.id}`: `/agreements/`" v-if="!isMobile")
+  loading.layout__main(getter="is_loading", v-if="is_loading")
+  .layout__main(v-else)
+    //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
+    Back(
+      :goto="!$route.path.includes('/bills') ? `/agreements/${$route.params.id}` : `/agreements/`",
+      v-if="!isMobile"
+    )
 
-        //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
-        .layout__title Оплата [{{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} {{'|' +object[0]?.object ? object[0]?.object : '' + ' ' + $route.params?.address ? $route.params?.address : '' | capitalize }}]
-        //- .layout__title Оплата {{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} 
-        
-        div(:style="{margin:isMobile?'0 -16px':'0 -24px'}")
-            .agreements-address__actions
-                .layout__tabs
-                    router-link.layout__tabs-item(v-if="!$route.params.id.includes('/bills')" :to="`/agreements/${$route.params.id}/${$route.params.address}/counters`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-counters'}") Показания счетчиков
-                    //router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-pay'}") Оплата
-                    router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.id}/bills`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-bills'}") Счета
-                    
-                .layout__actions
-                    a(href="#") Загрузить показания в Excel
-                    .bills-history__date-filter
-                        .bills-history__date-filter-input
-                            date-picker(
-                                v-model="filter.date"
-                                :editable="false"
-                                :clearable="true"
-                                :format="isMobile?'DD.MM':'DD.MM.YYYY'"
-                                :range="true"
-                                placeholder="Выбрать период"
-                                :class="{'datepicker_filled': filter.date}")
-                        .bills-history__date-filter-icon
-                            img(src="@/assets/images/calendar.svg")
-            router-view
-            //- (v-if="load")
+    //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
+    .layout__title Оплата [{{ getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name }} {{ '|' + object[0]?.object ? object[0]?.object : '' + ' ' + $route.params?.address ? $route.params?.address : '' | capitalize }}]
+    //- .layout__title Оплата {{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} 
+
+    div(:style="{ margin: isMobile ? '0 -16px' : '0 -24px' }")
+      .agreements-address__actions
+        .layout__tabs
+          router-link.layout__tabs-item(
+            v-if="!$route.params.id.includes('/bills')",
+            :to="`/agreements/${$route.params.id}/${$route.params.address}/counters`",
+            :class="{ 'layout__tabs-item_active': $route.name === 'agreements-address-counters' }"
+          ) Показания счетчиков
+          //router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-pay'}") Оплата
+          router-link.layout__tabs-item(
+            :to="`/agreements/${$route.params.id}/${$route.params.id}/bills`",
+            :class="{ 'layout__tabs-item_active': $route.name === 'agreements-address-bills' }"
+          ) Счета
+
+        .layout__actions
+          a(href="#") Загрузить показания в Excel
+          .bills-history__date-filter
+            .bills-history__date-filter-input
+              date-picker(
+                v-model="periodHandler",
+                :editable="false",
+                :clearable="true",
+                :format="isMobile ? 'DD.MM' : 'DD.MM.YYYY'",
+                :range="true",
+                placeholder="Выбрать период",
+                :class="{ datepicker_filled: filter.date }"
+              )
+            .bills-history__date-filter-icon
+              img(src="@/assets/images/calendar.svg")
+      router-view
+      //- (v-if="load")
 </template>
 
 <script>
-import {
-    Back, Loading
-} from '@/components'
+import { Back, Loading } from "@/components";
 
-import DatePicker from 'vue2-datepicker'
-
+import DatePicker from "vue2-datepicker";
 
 export default {
-    name: 'AgreementsAddress',
-    components: {
-        Back, Loading, DatePicker,
+  name: "AgreementsAddress",
+  components: {
+    Back,
+    Loading,
+    DatePicker,
+  },
+  async created() {
+    this.load = false;
+    await this.$store.dispatch("getObjects", this.$route.params?.id);
+    this.load = true;
+  },
+  computed: {
+    isMobile() {
+      return screen.width < 760;
     },
-    async created() {
-        this.load = false;
-        await this.$store.dispatch('getObjects', this.$route.params?.id);
-        this.load = true;
+    getCurrent() {
+      return this.$store.getters.getCurrentAgreement;
     },
-    computed: {
-        isMobile () {
-            return screen.width < 760
-        },
-        getCurrent () {
-            return this.$store.getters.getCurrentAgreement;
-        },
-        // object () {
-        //     return this.$store.getters.getCurrentObject;
-        // },
-        object () {
-            return this.$store.getters.getCurrentAgreement.objects.filter((el)=>el.objectId===this.$route.params.address)
-        },
-        is_loading() {
-            return this.$store.getters.is_loading
-        }
+    // object () {
+    //     return this.$store.getters.getCurrentObject;
+    // },
+    object() {
+      return this.$store.getters.getCurrentAgreement.objects.filter(
+        (el) => el.objectId === this.$route.params.address
+      );
     },
-    data() {
-        return {
-            load: false,
-            objectId: [],
-            filter: {
-                date: ''
-            }
-        }
+    is_loading() {
+      return this.$store.getters.is_loading;
     },
-    mounted(){
-    }
-}
+  },
+  data() {
+    return {
+      load: false,
+      objectId: [],
+      filter: {
+        date: "",
+      },
+      periodHandler: "",
+    };
+  },
+  watch: {
+    periodHandler(value) {
+      if (value) {
+        this.$store.dispatch('getBills', value)
+      }
+    },
+  },
+};
 </script>
 
 <style lang="sass">
 @import @/assets/styles/vars
-
-
-
 
 .bills-history
     border-right: 1px solid $color-border
@@ -123,7 +138,7 @@ export default {
         // background: red
         position: relative
         display: flex
-        
+
         // position: absolute
         // right: 24px
         // top: 12px
@@ -152,9 +167,6 @@ export default {
 
             @media screen and (max-width: $mobile-width)
                 width: 100px
-
-
-
 
 .agreements-address
     &__actions

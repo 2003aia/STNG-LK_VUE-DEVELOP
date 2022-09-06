@@ -10,7 +10,7 @@
             .history__table-cell(style="width: 60%") Задолженность
             .history__table-cell(style="width: 60%") Введите сумму
             .history__table-cell Действия
-        .history__table-row(v-for="bill in bills" :key="bill.id")
+        .history__table-row(v-for="bill in getBills" :key="bill.id")
             .history__table-cell(style="width: 60%") {{ bill.number }}
             .history__table-cell(style="width: 60%") {{ formatDate(bill.date) }}
             .history__table-cell(style="width: 60%") {{ formatPrice(bill['summ']) }}
@@ -125,10 +125,15 @@ export default {
             return screen.width < 760;
         },
         getBills () {
-            return this.$store.getters.getBills/* .find(bill => bill.id === this.$route.params.id); */
+            return this.$store.getters.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
         },
         getPDFFile () {
             return this.$store.getters.getPDFFile
+        }
+    },
+    watch: {
+        bills() {
+            
         }
     },
     mounted(){
