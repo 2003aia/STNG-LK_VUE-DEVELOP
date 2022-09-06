@@ -10,14 +10,15 @@
         img(src="@/assets/images/dots.svg")
     slot(name="card")
     .card__title {{ title }}
+    .card__subtitle {{contrName}}
     .card__content
         slot
         .card__content-client(v-if="$slots.client")
             slot(name="client")
         .card__content-bill(v-if="$slots.bill")
             slot(name="bill")
-        .card__content-bill(v-if="$slots.bill")
-            slot(name="bill2")    
+        //- .card__content-bill(v-if="$slots.bill")
+        //-     slot(name="bill2")    
     .card__footer(v-if="$slots.footer")
         slot(name="footer")
 </template>
@@ -32,6 +33,7 @@ export default {
         type: String,
         menu: Boolean,
         index: Number,
+        contrName: String,
     },
     computed: {
         classObject () {
@@ -119,6 +121,16 @@ export default {
         font:
             size: 1.13rem
             weight: 500
+        line-height: 1.5rem
+
+        @media screen and (max-width: $mobile-width)
+            font-size: 16px
+    &__subtitle
+        color: #fff
+        margin-bottom: .5rem
+        font:
+            size: .8125rem
+            // weight: 500
         line-height: 1.5rem
 
         @media screen and (max-width: $mobile-width)

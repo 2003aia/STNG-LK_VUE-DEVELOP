@@ -14,6 +14,7 @@
                 v-for="(agreement, agreementIndex) in getBills"
                 angle
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
+                :contrName="name"
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"
@@ -25,9 +26,9 @@
                 template(v-slot:client) {{ getBills.name }}
                 template(v-slot:bill) Вид договора: 
                     span {{ agreement.type }}
-                template(v-slot:bill2)
-                    span Имя контрагента: 
-                    span {{ name }}   
+                //- template(v-slot:bill2)
+                //-     span Имя контрагента: 
+                //-     span {{ name }}   
                 template(v-slot:footer)
                     Button(variety="white" :to="`/agreements/${agreement.id}`") Адреса
                     //- Button(variety="white" :to="`/bills/history/`") Адреса
