@@ -7,7 +7,6 @@
             div(@click="activeHandler")
                 router-link.layout__tabs-item(to="/agreements/" :class="{'layout__tabs-item_active': !active}" ) Неактивные
         loading(getter="is_loading")
-        
         .bills-list(v-if="error === '' && active")
             
             Card(
@@ -40,14 +39,14 @@
                     Button(variety="primary-light-outline" v-if="!isMobile") Удалить
             //- Button(variety="add-list") Добавить договор
 
-        .error(v-else)
-            h1 {{ error }}
+        //- .error(v-else)
+        //-     h1 {{ error }}
         .bills-list(v-if="error === '' && !active")
-            
             Card(
                 v-for="(agreement, agreementIndex) in getUnactiveBills"
                 angle
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
+                :contrName="name"
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"
@@ -68,6 +67,8 @@
                     Button(variety="primary-light" :to="`/agreements/${agreement.id}/${agreement.id}/bills`" v-if="!isMobile") Счета
                     
                     Button(variety="primary-light-outline" v-if="!isMobile") Удалить    
+        .error(v-else)
+            h1 {{ error }}            
     LayoutSidebar
         router-link(to="#") Все обращения
         SidebarSupport
