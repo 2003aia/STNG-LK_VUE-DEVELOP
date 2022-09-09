@@ -100,15 +100,6 @@ export default {
       }
     },
     periodHandler(value) {
-      let beginPeriod = value[0]
-        .toLocaleDateString("en-ZA")
-        .replace("/", "")
-        .replace("/", "");
-      let endPeriod = value[1]
-        .toLocaleDateString("en-ZA")
-        .replace("/", "")
-        .replace("/", "");
-        
         this.$store.dispatch("getServicesRequests", value)
     //   axios
     //     .get(

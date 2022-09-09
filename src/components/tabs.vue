@@ -14,6 +14,7 @@ export default {
     :key="index"
     :class="{'item_active': $route.name === 'support-ticket'}"
     :to="item.path") {{ item.label }}
+    
 </template>
 
 <style lang="sass" scoped>

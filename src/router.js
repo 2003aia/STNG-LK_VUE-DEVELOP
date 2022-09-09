@@ -1,5 +1,5 @@
 import Vue from "vue";
-import VueRouter from "vue-router";
+import VueRouter,{createWebHashHistory} from "vue-router";
 
 import {
     Home,
@@ -35,7 +35,7 @@ import {
 Vue.use(VueRouter);
 
 const router = new VueRouter({
-    mode: "history",
+    // mode: "history",
     base: process.env.BASE_URL,
     routes: [
         {

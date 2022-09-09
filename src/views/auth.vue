@@ -265,6 +265,7 @@ export default {
                 this.errors.push(json.Message);
                 console.error('form error: ', json.Message);
             } else {
+                this.$router.push('/agreements/')
                 this.successText = json.Message;
                 // this.nextStep();
             }
