@@ -8,13 +8,13 @@
             .history__table-cell(style="width: 60%") № счета
             .history__table-cell(style="width: 60%") Дата
             .history__table-cell(style="width: 60%") Задолженность
-            .history__table-cell(style="width: 60%") Введите сумму
+            //- .history__table-cell(style="width: 60%") Введите сумму
             .history__table-cell Действия
         .history__table-row(v-for="bill in getBills" :key="bill.id")
             .history__table-cell(style="width: 60%") {{ bill.number }}
-            .history__table-cell(style="width: 60%") {{ formatDate(bill.date) }}
+            .history__table-cell(style="width: 60%") {{ bill.date }}
             .history__table-cell(style="width: 60%") {{ formatPrice(bill['summ']) }}
-            .history__table-cell(style="width: 60%")
+            //- .history__table-cell(style="width: 60%")
                 input(v-if="bill['summ'] !== 0" type="number" v-model="bill['toPay']" placeholder="Введите сумму")
                 span(v-if="bill['summ'] === 0") {{ formatPrice(0) }}
             .history__table-cell
