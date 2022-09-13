@@ -12,6 +12,8 @@
     .card__title {{ title }}
     .card__subtitle Имя контрагента:  
         span {{contrName}} 
+    .card__subtitle ИНН:  
+        span {{inn}}    
     .card__content
         slot
         .card__content-client(v-if="$slots.client")
@@ -26,39 +28,39 @@
 
 <script>
 export default {
-    name: 'Card',
-    props: {
-        variety: String,
-        title: String,
-        angle: Boolean,
-        type: String,
-        menu: Boolean,
-        index: Number,
-        contrName: String,
+  name: "Card",
+  props: {
+    variety: String,
+    title: String,
+    angle: Boolean,
+    type: String,
+    menu: Boolean,
+    index: Number,
+    contrName: String,
+    inn: String,
+  },
+  computed: {
+    classObject() {
+      return {
+        card_secondary: this.variety === "secondary",
+      };
     },
-    computed: {
-        classObject () {
-            return {
-                'card_secondary': this.variety === 'secondary'
-            }
-        }
-    },
-    methods: {
-        menuToggle () {
-            let that = this
-            let result = this.$parent.openedMenu.findIndex(function (i) {
-                return i === that.index
-            })
+  },
+  methods: {
+    menuToggle() {
+      let that = this;
+      let result = this.$parent.openedMenu.findIndex(function (i) {
+        return i === that.index;
+      });
 
-            if (result === -1) {
-                this.$parent.openedMenu.push(this.index)
-            } else {
-                this.$parent.openedMenu.splice(result, 1)
-            }
-            
-        }
-    }
-}
+      if (result === -1) {
+        this.$parent.openedMenu.push(this.index);
+      } else {
+        this.$parent.openedMenu.splice(result, 1);
+      }
+    },
+  },
+};
 </script>
 
 <style lang="sass">
@@ -161,7 +163,7 @@ export default {
         span, a
             color: #fff
             text-decoration: none
-    
+
     &__footer
         margin-top: 1rem
         display: flex

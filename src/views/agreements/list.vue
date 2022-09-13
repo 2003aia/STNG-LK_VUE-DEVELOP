@@ -14,6 +14,7 @@
                 angle
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
                 :contrName="name"
+                :inn="inn.inn"
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"
@@ -111,6 +112,9 @@ export default {
         isMobile () {
             return screen.width < 760
         },
+        inn() {
+            return JSON.parse(Vue.cookie.get('profileData'))
+        },
         name() {
             return Vue.cookie.get('contrName')
         },
@@ -134,6 +138,7 @@ export default {
         }
     },
     mounted(){
+        
         this.$data.data = this.getBills.filter((el)=>el.active ===true)
     }
 }

@@ -359,7 +359,7 @@ export default new Vuex.Store({
       }
     },
     saveProfile: async (ctx, userObject) => {
-      console.log("profile saved");
+      console.log("profile saved", userObject);
       const res = await fetch(
         "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_save",
         {

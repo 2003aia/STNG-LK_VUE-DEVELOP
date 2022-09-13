@@ -20,11 +20,11 @@
                 Col
             Row(:style="{marginTop:isMobile?'0':'1.125rem'}" gutter="1.5" unit="rem")
                 Col
-                    Input(label="Телефон" v-model="profile.phone" type="phone")
+                    Input(label="Телефон" v-model="profile.phone")
 
             Row(:style="{marginTop:isMobile?'8px':'1.5rem'}" gutter="1.5" unit="rem")
                 Col
-                    Button(full, :method="saveProfile") Сохранить изменения
+                    Button(full, :method="saveProfile") Сохранить изменения 
                 Col
                     Button(full, variety="secondary", :method="()=>passChange = !passChange") Изменить пароль
     .layout__main(v-if="passChange===true")
@@ -67,10 +67,9 @@ export default {
         email: "",
       },
       passChange: false,
-      password: '',
-      passwordConfirm: '',
-      error: ''
-
+      password: "",
+      passwordConfirm: "",
+      error: "",
     };
   },
   computed: {
@@ -85,8 +84,6 @@ export default {
     this.$store.dispatch("getProfile");
 
     this.profile = JSON.parse(Vue.cookie.get("profileData"));
-
-    console.log(this.profile, "test");
   },
   methods: {
     async saveProfile() {
@@ -98,26 +95,32 @@ export default {
         imya: this.profile.imya,
         otchestvo: this.profile.otchestvo,
       };
+      const cachedData = JSON.parse(Vue.cookie.get("profileData"));
       this.$store.dispatch("saveProfile", userObject).then((res) => {
-        console.log(res, "testttt");
+
+        Vue.cookie.set(
+          "profileData",
+          JSON.stringify({ ...cachedData, userObject }),
+          {
+            expires: "2h",
+          }
+        );
       });
     },
     async savePassword() {
-        const token = Vue.cookie.get("token");
-        const userObject = {
+      const token = Vue.cookie.get("token");
+      const userObject = {
         token: token,
-        password: this.password
+        password: this.password,
       };
       if (this.password === this.passwordConfirm) {
-
-        this.$store.dispatch("savePassword", userObject).then((res)=>{
-            console.log(res, 'save password test')
-        })
+        this.$store.dispatch("savePassword", userObject).then((res) => {
+          console.log(res, "save password test");
+        });
       } else {
-        this.error = 'Пароли не совпадают'
+        this.error = "Пароли не совпадают";
       }
-
-    }
+    },
   },
   components: {
     LayoutSidebar,
