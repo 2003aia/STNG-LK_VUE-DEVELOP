@@ -18,7 +18,7 @@
         .app__header
             .app__wrapper
                 router-link.app__header-logo(to='/')
-                    img(src="@/assets/images/logo.png")
+                    img(src="@/assets/images/logo2.svg")
                 .app__header-mobile-menu(@click="mobileMenu = !mobileMenu")
                     img(src="@/assets/images/burger.svg" v-if="!mobileMenu")
                     img(src="@/assets/images/menu-close.svg" v-if="mobileMenu")
@@ -153,10 +153,12 @@ export default {
         &-logo
             width: 18rem
             flex-shrink: 0
-            padding: 1rem 0
+            padding: .5rem 0
 
             img
-                width: 100%
+                // width: 100%
+                width: 288px
+                height: 70px
 
             @media screen and (max-width: $mobile-width)
                 width: auto
@@ -166,7 +168,8 @@ export default {
                 flex-grow: 1
 
                 img
-                    width: 221px
+                    width: 151px
+                    height: 40px
 
         &-actions
             flex-grow: 1

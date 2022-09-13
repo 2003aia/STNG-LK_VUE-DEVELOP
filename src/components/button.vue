@@ -1,5 +1,5 @@
 <template lang="pug">
-button.button(:class="classObject" @click="onClick")
+button.button(:class="classObject" v-on:click="method" @click="onClick")
     Icon(:color="color" :icon="icon" :style="{marginRight: !square ? '.75rem' : ''}" v-if="icon && !iconRight")
     span
         slot(v-if="!square")
@@ -19,6 +19,7 @@ export default {
         full: Boolean,
         iconRight: Boolean,
         size: String,
+        method: Function,
     },
     components: {
         Icon

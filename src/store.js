@@ -33,6 +33,8 @@ export default new Vuex.Store({
     currentObject: {},
     is_loading: true,
     passwordRecoverySent: null,
+    profileSaved: null,
+    passwordSaved: null,
   },
   mutations: {
     setBills(state, updateBills) {
@@ -88,6 +90,12 @@ export default new Vuex.Store({
     forgotUser: (state, message) => {
       state.passwordRecoverySent = message;
     },
+    profileSaved: (state, message) => {
+      state.profileSaved = message;
+    },
+    passwordSaved: (state, message) => {
+      state.passwordSaved = message;
+    },
   },
   actions: {
     getBills: async ({ commit, dispatch, state }, data) => {
@@ -105,7 +113,7 @@ export default new Vuex.Store({
         //     method: "post",
         //     body: formData
         // });
-        let fetchBills
+        let fetchBills;
         if (data) {
           let beginPeriod = data[0]
             .toLocaleDateString("en-ZA")
@@ -131,7 +139,6 @@ export default new Vuex.Store({
             }
           );
         }
-
 
         try {
           if (fetchBills.ok) {
@@ -223,7 +230,7 @@ export default new Vuex.Store({
     },
     getServicesRequests: async ({ commit, state }, data) => {
       console.log("Получаем токен из сервера...", data);
-      let res
+      let res;
       if (data) {
         let beginPeriod = data[0]
           .toLocaleDateString("en-ZA")
@@ -250,11 +257,10 @@ export default new Vuex.Store({
         );
       }
 
-
       if (res.ok) {
         const json = await res.json();
         if (json.error === false) {
-          console.log(json.data, 'testtest')
+          console.log(json.data, "testtest");
           commit("getServicesRequests", json.data);
         } else {
           return json;
@@ -319,6 +325,9 @@ export default new Vuex.Store({
             Vue.cookie.set("contrName", json.data.name, {
               expires: "2h",
             });
+            Vue.cookie.set("profileData", JSON.stringify(json.data), {
+              expires: "2h",
+            });
             ctx.commit("setUser", json.data.token);
             console.log("set token: ", json.data.token);
           } else {
@@ -344,6 +353,57 @@ export default new Vuex.Store({
         const json = await res.json();
         if (json.error === false) {
           ctx.commit("forgotUser", json.message);
+        } else {
+          return json;
+        }
+      }
+    },
+    saveProfile: async (ctx, userObject) => {
+      console.log("profile saved");
+      const res = await fetch(
+        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_save",
+        {
+          mode: "cors",
+          method: "post",
+          body: JSON.stringify({
+            phone: userObject.phone,
+            familia: userObject.familia,
+            imya: userObject.imya,
+            otchestvo: userObject.otchestvo,
+            token: userObject.token,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const json = await res.json();
+        console.log(json, 'profile saved store test')
+        if (json.error === false) {
+          ctx.commit("profileSaved", json.message);
+        } else {
+          return json;
+        }
+      }
+    },
+    savePassword: async (ctx, userObject) => {
+      console.log("save password");
+      const res = await fetch(
+        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_save",
+        {
+          mode: "cors",
+          method: "post",
+          body: JSON.stringify({
+            password: userObject.password,
+            token: userObject.token,
+          }),
+        }
+      );
+
+      if (res.ok) {
+        const json = await res.json();
+        console.log(json, 'password saved store test')
+        if (json.error === false) {
+          ctx.commit("passwordSaved", json.message);
         } else {
           return json;
         }
