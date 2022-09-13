@@ -10,7 +10,7 @@
             .auth__card
                 .auth__card-inner
                     .app__header-logo
-                        img(src="@/assets/images/logo.png")
+                        img(src="@/assets/images/logo2.svg")
                     .auth__form
                         h1.auth__title Авторизация
                         .auth__fieldset
@@ -33,7 +33,7 @@
             .auth__card
                 .auth__card-inner
                     .app__header-logo
-                        img(src="@/assets/images/logo.png")
+                        img(src="@/assets/images/logo2.svg")
                     .auth__form(v-if="regData.length > 0")
                         h1.auth__title Регистрация
                         .auth__selector
