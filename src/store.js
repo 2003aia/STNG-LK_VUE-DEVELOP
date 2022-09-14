@@ -56,6 +56,7 @@ export default new Vuex.Store({
       state.servicesRequests = data;
     },
     getSupport: (state) => {
+
       state.support = dataSupport;
     },
     showOverlay: (state) => {
@@ -268,7 +269,37 @@ export default new Vuex.Store({
       }
       // ctx.commit("getServicesRequests");
     },
-    getSupport: (ctx) => {
+    getSupport: async (ctx, ) => {
+      if (ctx.state.user.isLoggedIn) {
+        console.log("Получаем куратора с сервера...");
+
+
+        const fetchAgreements = await fetch(
+          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_curator?token=${ctx.state.user.token}`,
+          {
+            mode: "cors",
+            method: "get",
+            /* body: JSON.stringify({
+                token: ctx.state.user.token,
+            }) */
+          }
+        );
+
+        try {
+          if (fetchAgreements.ok) {
+            const jsonAgreements = await fetchAgreements.json();
+
+            console.log("Получили куратора:", jsonAgreements.data);
+            
+
+            
+          } else {
+            console.error("Error:", fetchAgreements.json());
+          }
+        } catch {
+          console.error("Error: fetch api-url not send");
+        }
+      }
       ctx.commit("getSupport");
     },
     showOverlay: (ctx) => {
@@ -415,6 +446,9 @@ export default new Vuex.Store({
         console.log("Получаем токен из куки...");
         ctx.commit("setUser", Vue.cookie.get("token"));
       } else {
+        if (router.currentRoute.params.token) {
+          Vue.cookie.set("token", router.currentRoute.params.token)
+        }
         console.log("Токен отсутствует в куки, требуется авторизация...");
       }
     },

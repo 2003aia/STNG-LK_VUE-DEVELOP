@@ -43,7 +43,7 @@ const router = new VueRouter({
             component: Agreements,
         },
         {
-            path: "/auth",
+            path: "/auth/:token",
             component: Auth
         },
         {

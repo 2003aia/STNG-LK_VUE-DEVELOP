@@ -3,7 +3,7 @@
     .auth__container(v-if="page === 'auth'")
         .auth__wrapper
             a.app__backward(href="/")
-                span Вернуться на основной сайт
+                span   Вернуться на основной сайт
                 Icon(color="font-mute" icon="backward")
             .auth__card
                 p.auth__notaccount Еще нет аккаунта? <a href="#reg" @click="page = 'reg'">Зарегистрируйтесь</a>
@@ -98,7 +98,7 @@
             .auth__card
                 .auth__card-inner
                     .app__header-logo
-                        img(src="@/assets/images/logo.png")
+                        img(src="@/assets/images/logo2.svg")
                     .auth__form
                         h1.auth__title Восстановление пароля
                         .auth__fieldset(v-if="(!forgotSent)")
@@ -119,264 +119,267 @@
 </template>
 
 <script>
-import {
-    Icon,
-    Input
-} from '@/components'
+import { Icon, Input } from "@/components";
 import Vue from "vue";
-import Multiselect from 'vue-multiselect'
+import Multiselect from "vue-multiselect";
 
 export default {
-    name: "auth",
-    components: {
+  name: "auth",
+  components: {
     Icon,
     Input,
-    Multiselect
-},
-    data() {
-        return {
-            inn: '',
-            login: '',
-            password: '',
-            errors: [],
-            loading: false,
-            page: 'auth',
-            regData: [],
-            activeClientTab: 0,
-            successText: null,
-            privacy: false,
-            dadataValues: [],
-            isLoading: false,
-            forgot: false,
-            forgotSent: false,
-        }
+    Multiselect,
+  },
+  data() {
+    return {
+      inn: "",
+      login: "",
+      password: "",
+      errors: [],
+      loading: false,
+      page: "auth",
+      regData: [],
+      activeClientTab: 0,
+      successText: null,
+      privacy: false,
+      dadataValues: [],
+      isLoading: false,
+      forgot: false,
+      forgotSent: false,
+    };
+  },
+  computed: {
+    isLoggedIn() {
+      return this.$store.getters.cuser.isLoggedIn;
     },
-    computed: {
-        isLoggedIn () {
-            return this.$store.getters.cuser.isLoggedIn
-        },
-        currentData () {
-            return this.regData[this.activeClientTab];
-        },
-        formatedForm: function () {
-            let result = {};
-            result['DATE'] = new Date();
-            result['CLIENT_ID'] = this.activeClientTab;
-            result['ATTACHMENTS'] = [];
-
-            if (this.activeClientTab !== null) {
-                let array = this.currentData.sections;
-                for (let index = 0; index < array.length; index++) {
-                    const element = array[index];
-                    for (let i = 0; i < element.fields.length; i++) {
-                        const field = element.fields[i];
-                        if (field.type === 'file') {
-                            for (let k = 0; k < field.value.length; k++) {
-                            const file = field.value[k];
-
-                            result['ATTACHMENTS'].push({
-                                "MODEL": field.model,
-                                "TITLE": file.title,
-                                "FileID": file.FileID,
-                            })
-                            }
-                        } else if (field.model === 'PROP_INN') {
-                            if (field.value) 
-                                result[field.model] = field.value.data.inn;
-                        } else {
-                            result[field.model] = field.value;
-                        }
-                    }
-                }
-            }
-            return result;
-        },
+    currentData() {
+      return this.regData[this.activeClientTab];
     },
-    mounted() {
-        console.log(this.page, 'page')
-        if (this.isLoggedIn) {
-            console.log('Вы авторизованы, покиньте страницу...')
-        } else {
-            fetch('https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_details')
-                .then(res => res.json())
-                .then(data => {
-                    console.log('Получены данные для формы регистрации', data)
-                    this.regData = data;
+    formatedForm: function () {
+      let result = {};
+      result["DATE"] = new Date();
+      result["CLIENT_ID"] = this.activeClientTab;
+      result["ATTACHMENTS"] = [];
+
+      if (this.activeClientTab !== null) {
+        let array = this.currentData.sections;
+        for (let index = 0; index < array.length; index++) {
+          const element = array[index];
+          for (let i = 0; i < element.fields.length; i++) {
+            const field = element.fields[i];
+            if (field.type === "file") {
+              for (let k = 0; k < field.value.length; k++) {
+                const file = field.value[k];
+
+                result["ATTACHMENTS"].push({
+                  MODEL: field.model,
+                  TITLE: file.title,
+                  FileID: file.FileID,
                 });
-        }
-    },
-    methods: {
-        selectINN: function (value) {
-            for (let i = 0; i < this.currentData.sections.length; i++) {
-                const section = this.currentData.sections[i];
-                const item = section.fields.find(prop => prop.model === 'PROP_ORG_NAME');
-                if (item !== undefined) {
-                    item.value = value.value
-                }
-            }
-        },
-        asyncFind: function(val) {
-            // if (val.length > 5) { // 143405 инн тест
-                this.dadataValues = [];
-                this.isLoading = true;
-
-                const url = "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party";
-                const token = "f135ebe81ca212b9d61fedadba1e0111159f0d6b";
-                let query = val;
-
-                const options = {
-                    method: "POST",
-                    mode: "cors",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "Authorization": "Token " + token
-                    },
-                    body: JSON.stringify({locations_boost: [{kladr_id: "14"}], query: query})
-                }
-
-                fetch(url, options)
-                    .then(res => res.json())
-                    .then(data => {
-                        console.log('data.suggestions', data.suggestions)
-                        this.dadataValues = data.suggestions;
-                        this.isLoading = false;
-                    })
-
-            // }
-        },
-        sendForm: async function () {
-            this.errors = [];
-            this.loading = true;
-            if (this.privacy === false) {
-                this.errors.push('Требуется согласие на обработку персональных данных')
-                return;
-            }
-            const form = this.formatedForm;
-            
-            const res = await fetch('https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_apps', {
-                method: 'post',
-                mode: 'cors',
-                body: JSON.stringify(form)
-            });
-            const json = await res.json();
-            
-            if (json.Error === true) {
-                this.errors.push(json.Message);
-                console.error('form error: ', json.Message);
+              }
+            } else if (field.model === "PROP_INN") {
+              if (field.value) result[field.model] = field.value.data.inn;
             } else {
-                // this.$router.push('/agreements/')
-                this.successText = json.Message;
-                // this.nextStep();
+              result[field.model] = field.value;
             }
-            this.loading = false;
-        },
-        loadFile: async function (e) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-
-            reader.onloadend = async () => {
-            const base64String = reader.result
-                .replace('data:', '')
-                .replace(/^.+,/, '');
-
-            const raw = {
-                "title": file.name,
-                "base64": base64String,
-            };
-
-            let res = await fetch(
-                'https://1c.aostng.ru/VESTA/hs/API_STNG/jur_file',
-                {
-                method: 'post',
-                body: JSON.stringify(raw),
-                mode: 'cors',
-                }
-            );
-
-            let json = await res.json();
-
-            this.currentData.sections[1].fields[
-                e.target.attributes['data-prop'].value
-            ].value = [
-                ...this.currentData.sections[1].fields[
-                e.target.attributes['data-prop'].value
-                ].value,
-                json,
-            ];
-            };
-            reader.readAsDataURL(file);
-        },
-        checkin () {
-            this.errors = []
-            if (this.login.length < 3) {
-                this.errors.push('Введите корректный логин')
-            }
-            if (this.password.length < 3) {
-                this.errors.push('Введите корректный пароль')
-            }
-        },
-        async submit () {
-            this.loading = true
-            this.checkin()
-
-            if (this.errors.length === 0) {
-                const userObject = {
-                    login: this.login,
-                    password: this.password,
-                }
-                await this.$store.dispatch('authUser', userObject)
-                    .then(res => {
-                        this.$router.push('/agreements/')
-                        this.errors.push(res)
-                    })
-
-            }
-            this.loading = false
-        },
-        forgotPage () {
-            this.page = 'forgot'
-        },
-        async submitForgot () {
-            this.loading = true
-            // this.checkin()
-
-            // if (this.login > 3) {
-                console.log('test')
-                const userObject = {
-                    email: this.login,
-                }
-                if (this.login.length > 3) {
-
-                await this.$store.dispatch('forgotUser', userObject)
-                    .then(res => {
-                        if (res.error) {
-                            
-                            this.forgotSent = false                            
-                        } else {
-                           this.forgotSent = true 
-                        }
-                        this.errors = []
-                        this.loading = false
-                        this.errors.push(res.message)
-                    })
-                } else {
-                    this.errors = []
-                    this.errors.push('Введите корректный логин')
-                    this.loading = false
-                }
-
-            // } else {
-            //     this.errors = []
-            //     this.errors.push('Введите корректный логин')
-            // }
-            
-        }  
+          }
+        }
+      }
+      return result;
     },
-    watch: {
-
+  },
+  mounted() {
+    console.log(this.page, "page");
+    if (this.isLoggedIn) {
+      console.log("Вы авторизованы, покиньте страницу...");
+    } else {
+      if (this.$router.currentRoute.query.token) {
+        const token = this.$router.currentRoute.query.token
+        this.$router.push("/agreements/");
+        this.$store.commit('setUser', token)
+        Vue.cookie.set("token", token)
+      }
+      fetch("https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_details")
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("Получены данные для формы регистрации", data);
+          this.regData = data;
+        });
     }
-}
+  },
+  methods: {
+    selectINN: function (value) {
+      for (let i = 0; i < this.currentData.sections.length; i++) {
+        const section = this.currentData.sections[i];
+        const item = section.fields.find(
+          (prop) => prop.model === "PROP_ORG_NAME"
+        );
+        if (item !== undefined) {
+          item.value = value.value;
+        }
+      }
+    },
+    asyncFind: function (val) {
+      // if (val.length > 5) { // 143405 инн тест
+      this.dadataValues = [];
+      this.isLoading = true;
+
+      const url =
+        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/party";
+      const token = "f135ebe81ca212b9d61fedadba1e0111159f0d6b";
+      let query = val;
+
+      const options = {
+        method: "POST",
+        mode: "cors",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: "Token " + token,
+        },
+        body: JSON.stringify({
+          locations_boost: [{ kladr_id: "14" }],
+          query: query,
+        }),
+      };
+
+      fetch(url, options)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log("data.suggestions", data.suggestions);
+          this.dadataValues = data.suggestions;
+          this.isLoading = false;
+        });
+
+      // }
+    },
+    sendForm: async function () {
+      this.errors = [];
+      this.loading = true;
+      if (this.privacy === false) {
+        this.errors.push("Требуется согласие на обработку персональных данных");
+        return;
+      }
+      const form = this.formatedForm;
+
+      const res = await fetch(
+        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_apps",
+        {
+          method: "post",
+          mode: "cors",
+          body: JSON.stringify(form),
+        }
+      );
+      const json = await res.json();
+
+      if (json.Error === true) {
+        this.errors.push(json.Message);
+        console.error("form error: ", json.Message);
+      } else {
+        // this.$router.push('/agreements/')
+        this.successText = json.Message;
+        // this.nextStep();
+      }
+      this.loading = false;
+    },
+    loadFile: async function (e) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+
+      reader.onloadend = async () => {
+        const base64String = reader.result
+          .replace("data:", "")
+          .replace(/^.+,/, "");
+
+        const raw = {
+          title: file.name,
+          base64: base64String,
+        };
+
+        let res = await fetch(
+          "https://1c.aostng.ru/VESTA/hs/API_STNG/jur_file",
+          {
+            method: "post",
+            body: JSON.stringify(raw),
+            mode: "cors",
+          }
+        );
+
+        let json = await res.json();
+
+        this.currentData.sections[1].fields[
+          e.target.attributes["data-prop"].value
+        ].value = [
+          ...this.currentData.sections[1].fields[
+            e.target.attributes["data-prop"].value
+          ].value,
+          json,
+        ];
+      };
+      reader.readAsDataURL(file);
+    },
+    checkin() {
+      this.errors = [];
+      if (this.login.length < 3) {
+        this.errors.push("Введите корректный логин");
+      }
+      if (this.password.length < 3) {
+        this.errors.push("Введите корректный пароль");
+      }
+    },
+    async submit() {
+      this.loading = true;
+      this.checkin();
+
+      if (this.errors.length === 0) {
+        const userObject = {
+          login: this.login,
+          password: this.password,
+        };
+        await this.$store.dispatch("authUser", userObject).then((res) => {
+          this.$router.push("/agreements/");
+          this.errors.push(res);
+        });
+      }
+      this.loading = false;
+    },
+    forgotPage() {
+      this.page = "forgot";
+    },
+    async submitForgot() {
+      this.loading = true;
+      // this.checkin()
+
+      // if (this.login > 3) {
+      console.log("test");
+      const userObject = {
+        email: this.login,
+      };
+      if (this.login.length > 3) {
+        await this.$store.dispatch("forgotUser", userObject).then((res) => {
+          if (res.error) {
+            this.forgotSent = false;
+          } else {
+            this.forgotSent = true;
+          }
+          this.errors = [];
+          this.loading = false;
+          this.errors.push(res.message);
+        });
+      } else {
+        this.errors = [];
+        this.errors.push("Введите корректный логин");
+        this.loading = false;
+      }
+
+      // } else {
+      //     this.errors = []
+      //     this.errors.push('Введите корректный логин')
+      // }
+    },
+  },
+  watch: {},
+};
 </script>
 
 <style scoped lang="sass">
@@ -475,6 +478,7 @@ export default {
         margin-bottom: 0
 .app__backward
     margin-bottom: 16px
+    margin-left: 20px
     line-height: 48px
 .app__header-logo
     width: 100%

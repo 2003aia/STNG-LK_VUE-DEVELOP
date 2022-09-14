@@ -48,6 +48,7 @@
                 angle
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
                 :contrName="name"
+                :inn="inn.inn"
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"

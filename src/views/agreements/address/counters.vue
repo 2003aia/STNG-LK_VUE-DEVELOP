@@ -9,7 +9,7 @@
     .history__table-row(v-for="item in records", :key="item.id")
       .history__table-cell {{ item.counterId }}
       .history__table-cell {{ item.old_indication }}
-      .history__table-cell - {{ item.date }}
+      .history__table-cell {{ item.date }}
         //div(:style="{color:getColor(item.date)}") {{ item.date }}
       .history__table-cell
         input(
@@ -18,14 +18,14 @@
           placeholder="Введите показания счетчика"
         )
   .mobile-table.mobile-table_variant(v-if="isMobile")
-    .mobile-table__item(v-for="item in getBills[0].counters", :key="item.id")
+    .mobile-table__item(v-for="item in records", :key="item.id")
       .mobile-table__title {{ item.counterId }}
       .mobile-table__field
         .mobile-table__key Показания счетчика
         .mobile-table__value {{ item.old_indication }}
       .mobile-table__field
         .mobile-table__key Дата поверки
-        .mobile-table__value - {{ item.date }}
+        .mobile-table__value {{ item.date }}
           //div(:style="{color:getColor(item.date)}") {{ item.date }}
       .mobile-table__field
         .mobile-table__key Новые показания

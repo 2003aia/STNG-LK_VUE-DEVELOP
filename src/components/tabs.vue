@@ -33,7 +33,7 @@ export default {
         bottom: 1px solid $color-border
 
   @media screen and (max-width: $mobile-width)
-    padding: 0 .75rem
+    padding: 20px .75rem
 
   .item
     -webkit-box-direction: normal
