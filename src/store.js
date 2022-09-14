@@ -56,7 +56,6 @@ export default new Vuex.Store({
       state.servicesRequests = data;
     },
     getSupport: (state) => {
-
       state.support = dataSupport;
     },
     showOverlay: (state) => {
@@ -269,10 +268,9 @@ export default new Vuex.Store({
       }
       // ctx.commit("getServicesRequests");
     },
-    getSupport: async (ctx, ) => {
+    getSupport: async (ctx) => {
       if (ctx.state.user.isLoggedIn) {
         console.log("Получаем куратора с сервера...");
-
 
         const fetchAgreements = await fetch(
           `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_curator?token=${ctx.state.user.token}`,
@@ -290,9 +288,6 @@ export default new Vuex.Store({
             const jsonAgreements = await fetchAgreements.json();
 
             console.log("Получили куратора:", jsonAgreements.data);
-            
-
-            
           } else {
             console.error("Error:", fetchAgreements.json());
           }
@@ -360,7 +355,7 @@ export default new Vuex.Store({
               expires: "2h",
             });
             ctx.commit("setUser", json.data.token);
-            console.log("set token: ", json.data.token);
+            console.log("set token: ", json.data.token, JSON.stringify(json.data));
           } else {
             return json;
           }
@@ -408,7 +403,7 @@ export default new Vuex.Store({
 
       if (res.ok) {
         const json = await res.json();
-        console.log(json, 'profile saved store test')
+        console.log(json, "profile saved store test");
         if (json.error === false) {
           ctx.commit("profileSaved", json.message);
         } else {
@@ -432,7 +427,7 @@ export default new Vuex.Store({
 
       if (res.ok) {
         const json = await res.json();
-        console.log(json, 'password saved store test')
+        console.log(json, "password saved store test");
         if (json.error === false) {
           ctx.commit("passwordSaved", json.message);
         } else {
@@ -446,9 +441,21 @@ export default new Vuex.Store({
         console.log("Получаем токен из куки...");
         ctx.commit("setUser", Vue.cookie.get("token"));
       } else {
-        if (router.currentRoute.params.token) {
-          Vue.cookie.set("token", router.currentRoute.params.token)
+        if (router.currentRoute.query.token) {
+          const token = router.currentRoute.query.token;
+          const profileData = router.currentRoute.query
+          console.log(profileData, '////init test', router.currentRoute.query.profileData)
+         
+          ctx.commit("setUser", token);
+          Vue.cookie.set("token", token);
+          Vue.cookie.set('profileData', JSON.stringify(profileData))
+          Vue.cookie.set('contrName', profileData.name)
+          router.push('/agreements/')
         }
+        /* if (router.currentRoute.query.token) {
+          console.log()
+          Vue.cookie.set("token", router.currentRoute.query.token)
+        } */
         console.log("Токен отсутствует в куки, требуется авторизация...");
       }
     },

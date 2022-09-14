@@ -9,7 +9,7 @@
                 p.auth__notaccount Еще нет аккаунта? <a href="#reg" @click="page = 'reg'">Зарегистрируйтесь</a>
             .auth__card
                 .auth__card-inner
-                    .app__header-logo
+                    .app__header-logo2
                         img(src="@/assets/images/logo2.svg")
                     .auth__form
                         h1.auth__title Авторизация
@@ -32,7 +32,7 @@
                 p.auth__notaccount У вас уже есть аккаунт? <a href="#reg" @click="page = 'auth'">Авторизуйтесь</a>
             .auth__card
                 .auth__card-inner
-                    .app__header-logo
+                    .app__header-logo2
                         img(src="@/assets/images/logo2.svg")
                     .auth__form(v-if="regData.length > 0")
                         h1.auth__title Регистрация
@@ -97,7 +97,7 @@
                 p.auth__notaccount Еще нет аккаунта? <a href="#reg" @click="page = 'reg'; errors = []" >Зарегистрируйтесь</a>
             .auth__card
                 .auth__card-inner
-                    .app__header-logo
+                    .app__header-logo2
                         img(src="@/assets/images/logo2.svg")
                     .auth__form
                         h1.auth__title Восстановление пароля
@@ -193,12 +193,7 @@ export default {
     if (this.isLoggedIn) {
       console.log("Вы авторизованы, покиньте страницу...");
     } else {
-      if (this.$router.currentRoute.query.token) {
-        const token = this.$router.currentRoute.query.token
-        this.$router.push("/agreements/");
-        this.$store.commit('setUser', token)
-        Vue.cookie.set("token", token)
-      }
+     
       fetch("https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_details")
         .then((res) => res.json())
         .then((data) => {
@@ -480,9 +475,11 @@ export default {
     margin-bottom: 16px
     margin-left: 20px
     line-height: 48px
-.app__header-logo
+.app__header-logo2
     width: 100%
     padding: 0
+    img
+      width: 100%
 
 .button
     background: $color-primary
