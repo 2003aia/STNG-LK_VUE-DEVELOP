@@ -24,7 +24,7 @@
                     img(src="@/assets/images/menu-close.svg" v-if="mobileMenu")
                 .app__header-actions
                     a.app__backward(href="/")
-                        span Вернуться на основной сайт
+                        span Вернуться на основной сайт 
                         Icon(color="font-mute" icon="backward")
 
                     .app__header-contacts
@@ -71,6 +71,9 @@ export default {
         }
     },
     computed: {
+        registrUrl() {
+            return this.$store.state.user.registr
+        },
         isMobile () {
             return screen.width < 760
         },
