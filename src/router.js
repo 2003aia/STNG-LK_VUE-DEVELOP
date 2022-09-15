@@ -1,5 +1,5 @@
 import Vue from "vue";
-import VueRouter,{createWebHashHistory} from "vue-router";
+import VueRouter, {createWebHashHistory} from "vue-router";
 
 import {
     Home,
@@ -20,6 +20,7 @@ import {
     ServicesForm,
     ServicesMy,
     Support,
+    SupportTicket,
     SupportArchive,
     SupportCreate,
     Agreements,
@@ -174,6 +175,11 @@ const router = new VueRouter({
             name: "support",
             component: Support,
             children: [
+                {
+                    name: "support-ticket",
+                    path: ":id",
+                    component: SupportTicket
+                },
                 {
                     name: "support-archive",
                     path: "archive",

@@ -29,5 +29,6 @@ export { default as ServicesRequest } from './services/request'
 export { default as ServicesForm } from './services/form'
 
 export { default as Support } from './support'
+export { default as SupportTicket } from './support/ticket'
 export { default as SupportArchive } from './support/archive'
 export { default as SupportCreate } from './support/create'

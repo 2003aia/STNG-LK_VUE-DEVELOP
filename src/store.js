@@ -7,6 +7,7 @@ import dataServicesRequests from "@/data/services-requests.json";
 import dataSupport from "@/data/support.json";
 import router from "@/router";
 import axios from "axios";
+import support from './support_module'
 
 const API_URL = "https://aostng.ru/api/lk/";
 const API_METHOD = "connect.getjur"; // getjur - VESTA; getjur2 - vesta_development
@@ -14,8 +15,13 @@ const API_METHOD = "connect.getjur"; // getjur - VESTA; getjur2 - vesta_developm
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  modules:{
+    supportModule: support,
+  },
   state: {
     user: {
+      id: null,
+      login: null,
       token: null,
       isLoggedIn: false,
     },
@@ -64,9 +70,11 @@ export default new Vuex.Store({
     hideOverlay: (state) => {
       state.overlay = false;
     },
-    setUser: (state, userToken) => {
+    setUser: (state, data, login) => {
       state.user.isLoggedIn = true;
-      state.user.token = userToken;
+      state.user.id = data.id;
+      state.user.login = login;
+      state.user.token = data.token;
     },
     setObjects: (state, obj) => {
       state.objects = obj;
@@ -354,7 +362,7 @@ export default new Vuex.Store({
             Vue.cookie.set("profileData", JSON.stringify(json.data), {
               expires: "2h",
             });
-            ctx.commit("setUser", json.data.token);
+            ctx.commit("setUser", json.data, userObject.login);
             console.log("set token: ", json.data.token, JSON.stringify(json.data));
           } else {
             return json;

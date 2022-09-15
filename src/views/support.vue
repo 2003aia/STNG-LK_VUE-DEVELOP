@@ -13,34 +13,7 @@
         .layout__actions
             Button(class="button_new-request" variety="white" icon="new-message" iconRight to="/support/create") Новое обращение
     .layout__content
-        router-view(v-if="$route.name !== 'support'")
-        .support__layout(v-if="$route.name === 'support'")
-            .support__requests(:class="{'support__requests_active': isMobile && mobileScreen === 'requests'}")
-                .support__request(v-for="(item, index) in support" :class="{'support__request_active': selectedRequest === index && !isMobile}" @click="selectRequest(index)")
-                    .support__request-title
-                        .support__request-number {{ '№' + item.number }}
-                        .support__request-status(:class="{'support__request-status_success': item.status === 'green', 'support__request-status_error': item.status === 'red'}")
-                    .support__request-date {{ formatDate(item.date) }}
-            .support__chat(:class="{'support__chat_active': isMobile && mobileScreen === 'chat'}")
-                .support__scrollable
-                    .support__chat-description
-                        span {{ 'Обращение №' + (support[selectedRequest] ? support[selectedRequest].number : '') }}
-                        br
-                        | Категория: {{ support[selectedRequest] ? support[selectedRequest].category : '' }}
-                    .support__messages
-                        .support__message(
-                            v-for="(message, messageIndex) in (support[selectedRequest] ? support[selectedRequest].messages : [])"
-                            :class="{'support__message_answer': message.type === 'answer', 'support__message_question': message.type === 'question'}"
-                            )
-                            .support__message-text {{ message.text }}
-                            .support__message-date {{ formatDate(message.date) }}
-                            .support__message-angle
-                                Icon(icon="message-angle" :color="message.type === 'answer' ? 'primary' : 'secondary'")
-                .support__chat-form
-                    .support__chat-form-placeholder(v-if="message === ''") Напишите что нибудь...
-                    Icon(icon="attachment" color="primary")
-                    .support__chat-form-input(contenteditable @input="onChangeMessage" ref="chatinput")
-                    Icon(icon="send" color="primary" @click.native="sendMessage")
+        router-view
 </template>
 
 <script>
@@ -56,48 +29,54 @@ export default {
     name: 'Requests',
     data () {
         return {
-            support: [],
-            selectedRequest: 0,
-            message: '',
-            mobileScreen: 'requests'
+            tabs: [
+                {
+                    label: 'Обращения',
+                    path: '/support'
+                },
+            ]
         }
     },
     computed: {
         isMobile () {
             return screen.width < 760
-        }
+        },
+        currentRoute () { return this.$route.params.currentRoute },
+    
+        tickets() { return this.$store.getters['supportModule/tickets'] },
+
+        routeName() { return this.$route.name; }
     },
     methods: {
-        formatDate (date) {
-            return moment(date).calendar()
-        },
-        onChangeMessage (e) {
-            this.message = e.target.innerText
-        },
-        sendMessage () {
-            if (this.message !== '') {
-                this.support[this.selectedRequest].messages.push({
-                    type: 'question',
-                    text: this.message,
-                    date: moment().format('YYYY-MM-DD HH:mm:ss')
-                })
-                this.$refs.chatinput.innerText = ''
-                this.message = ''
-            }
-        },
-        selectRequest (index) {
-            this.selectedRequest = index
-            this.mobileScreen = 'chat'
+        async initSupport(){
+            await this.$store.dispatch('supportModule/init');
         }
     },
-    mounted () {
-        this.$store.dispatch('getSupport')
-        this.support = this.$store.state.support
 
-        if (this.$route.query.index) this.selectedRequest = this.$route.query.index
+    async mounted () {
+        console.log(this.$route.name)
+        await this.$store.dispatch('supportModule/init');
     },
     components: {
         Button, Icon
+    },
+    watch:{
+        tickets(value) {
+            if (value.length > 0 && this.routeName === 'support'){
+                this.$router.push({
+                    name: 'support-ticket',
+                    params:{
+                        id: value[0].id
+                    }
+                })
+            }
+        },
+        
+        routeName(value) {
+            if (value === 'support'){
+                this.initSupport();
+            }
+        },
     }
 }
 </script>

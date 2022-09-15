@@ -1,48 +1,94 @@
-<template lang="pug">
-.support__layout.sidebar-support
-    .support__requests
-        .support__request(v-for="(item, index) in support" @click="goto(index)")
-            .support__request-title
-                .support__request-number {{ '№' + item.number }}
-                .support__request-status(:class="{'support__request-status_success': item.status === 'green', 'support__request-status_error': item.status === 'red'}")
-            .support__request-date {{ formatDate(item.date) }}
-</template>
-
 <script>
-import moment from 'moment'
+import moment from "moment";
 
 export default {
-    name: 'SidebarSupport',
-    data () {
-        return {
-            support: []
-        }
+  name: "support-list",
+
+  props: ["items", "limit"],
+
+  methods: {
+    get_class_object: (color) => {
+      const colors = {
+        red: "status_red",
+        green_s: "status_green",
+        green: "status_green",
+        yellow: "status_yellow",
+      };
+      return colors[color];
     },
-    mounted () {
-        this.$store.dispatch('getSupport')
-        this.support = this.$store.state.support
+
+    format_date: (date) => moment(date).format("DD.MM.YYYY HH:mm"),
+
+    click(e, id) {
+      if (this.$route.params.id != id) {
+        this.$router.push({
+          name: "support-ticket",
+          params: {
+            id: id,
+          },
+        });
+      }
+      this.$emit("selectTicket", id);
     },
-    methods: {
-        formatDate (date) {
-            return moment(date).calendar()
-        },
-        goto (index) {
-            this.$router.push({name: 'support', query: { index }})
-        }
-    }
-}
+  },
+};
 </script>
 
-<style lang="sass">
+<template lang="pug">
+.support-list
+  .item(
+    v-for="(item, item_index) in items"
+    :key="item.id"
+    @click="e => click(e, item.id)"
+    :class="{'item_active': item.id === $route.params.id}"
+    v-if="!limit || (limit && item_index < limit)")
+    .title
+      .number №{{ item.id }}
+      .status(:class="get_class_object(item.color)")
+    .date {{ item.date }}
+</template>
+
+<style lang="sass" scoped>
 @import @/assets/styles/vars
 
-.sidebar-support
-    .support__requests
-        border-right: none
-        width: 100%
+.support-list
+  .item
+    padding: 1rem 1.5rem
+    border-bottom: 1px solid $color-border
+    cursor: pointer
+    display: block
+    text-decoration: none
 
-    .support__request
-        border-top: none
-        border-bottom: 1px solid $color-border
-        padding: 1rem 0
+    &_active
+      background: $color-secondary
+
+    .title
+      display: flex
+      align-items: center
+      line-height: 1.5rem
+
+      .number
+        color: $color-primary
+        font-size: .8rem
+
+      .status
+        width: 6px
+        height: 6px
+        flex-shrink: 0
+        border-radius: 50%
+        margin-left: 8px
+
+        &_red
+          background: $color-red
+
+        &_green
+          background: $color-green
+        
+        &_yellow
+          background: $color-yellow
+
+    .date
+      line-height: 1.5rem
+      font-size: .8rem
+      color: $color-font-mute
 </style>
