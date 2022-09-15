@@ -48,6 +48,7 @@ export default {
       form_data.append("ul_web_token", ul_web_token);
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
+      form_data.append("email", profileData.email);
 
       console.log("init support", profileData.login, profileData.id);
 
@@ -114,6 +115,7 @@ export default {
       form_data.append("ul_web_token", ul_web_token);
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
+      form_data.append("email", profileData.email);
 
       for (const file of data.files) {
         form_data.append("files[]", file);
@@ -159,6 +161,7 @@ export default {
       form_data.append("ul_web_token", ul_web_token);
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
+      form_data.append("email", profileData.email);
 
       let tickets = ctx.state.tickets;
 
