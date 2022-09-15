@@ -2,7 +2,7 @@
 .auth
     .auth__container(v-if="page === 'auth'")
         .auth__wrapper
-            a.app__backward(href="/")
+            a.app__backward(href="https://aostng.ru/")
                 span   Вернуться на основной сайт
                 Icon(color="font-mute" icon="backward")
             .auth__card
@@ -25,7 +25,7 @@
                             button(class="button" v-else) Подождите...
     .auth__container(v-if="page === 'reg'")
         .auth__wrapper
-            a.app__backward(href="/")
+            a.app__backward(href="https://aostng.ru/")
                 span Вернуться на основной сайт
                 Icon(color="font-mute" icon="backward")
             .auth__card
@@ -94,7 +94,7 @@
                             span {{ successText }}
     .auth__container(v-if="page === 'forgot'")
         .auth__wrapper
-            a.app__backward(href="/")
+            a.app__backward(href="https://aostng.ru/")
                 span Вернуться на основной сайт
                 Icon(color="font-mute" icon="backward")
             .auth__card
@@ -206,12 +206,10 @@ export default {
     if (this.isLoggedIn) {
       console.log("Вы авторизованы, покиньте страницу...");
     } else {
-      fetch("https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_details")
-        .then((res) => res.json())
-        .then((data) => {
-          console.log("Получены данные для формы регистрации", data);
-          this.regData = data;
-        });
+      this.$store.dispatch("getRegData").then((data) => {
+        console.log("Получены данные для формы регистрации", data);
+        this.regData = data;
+      });
     }
   },
   methods: {
@@ -345,7 +343,9 @@ export default {
         };
         await this.$store.dispatch("authUser", userObject).then((res) => {
           this.$router.push("/agreements/");
-          this.errors.push(res);
+          if (res) {
+            this.errors.push(res.message);
+          }
         });
       }
       this.loading = false;
@@ -403,7 +403,7 @@ export default {
     @media screen and (max-width: $mobile-width)
       max-width: 100%
       // background: red
-    li  
+    li
         font-size: 13px
         // margin-bottom: 1rem
         word-break: break-all
@@ -492,7 +492,7 @@ export default {
             @media screen and (max-width: $mobile-width)
               // background: red
               display: block
-              
+
 
               // margin-top: 20px
             &:last-child

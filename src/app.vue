@@ -23,7 +23,7 @@
                     img(src="@/assets/images/burger.svg" v-if="!mobileMenu")
                     img(src="@/assets/images/menu-close.svg" v-if="mobileMenu")
                 .app__header-actions
-                    a.app__backward(href="/")
+                    a.app__backward(href="https://aostng.ru/")
                         span Вернуться на основной сайт 
                         Icon(color="font-mute" icon="backward")
 
@@ -81,8 +81,8 @@ export default {
             return this.$store.getters.cuser.isLoggedIn
         }
     },
-    mounted () {
-        this.$store.dispatch('init')
+    mounted() {
+        this.$store.dispatch('init');
     }
 }
 </script>

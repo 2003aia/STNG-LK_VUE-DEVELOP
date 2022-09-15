@@ -41,7 +41,7 @@ export default {
     :key="item.id"
     @click="e => click(e, item.id)"
     :class="{'item_active': item.id === $route.params.id}"
-    v-if="!limit || (limit && item_index < limit)")
+    v-if="items && !limit || (limit && item_index < limit)")
     .title
       .number №{{ item.id }}
       .status(:class="get_class_object(item.color)")

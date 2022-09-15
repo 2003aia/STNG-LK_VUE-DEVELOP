@@ -181,6 +181,11 @@ const router = new VueRouter({
             component: Support,
             children: [
                 {
+                    name: "support-create",
+                    path: "create",
+                    component: SupportCreate
+                },
+                {
                     name: "support-ticket",
                     path: ":id",
                     component: SupportTicket
@@ -190,11 +195,6 @@ const router = new VueRouter({
                     path: "archive",
                     component: SupportArchive
                 },
-                {
-                    name: "support-create",
-                    path: "create",
-                    component: SupportCreate
-                }
             ]
         }
     ]

@@ -1,6 +1,6 @@
 <script>
-import Icon from "@/components/icon";
-import Input from "@/components/input";
+import Icon from "@/components/icon-create-ticket";
+import Input from "@/components/input-create-ticket";
 import Loading from "@/components/loading";
 
 export default {
@@ -12,27 +12,30 @@ export default {
     "c-loading": Loading,
   },
 
-  data() { return {
-    selected_category: "",
-    message: "",
-    files: [],
-    filesError: false,
-  }},
+  data() {
+    return {
+      selected_category: "",
+      message: "",
+      files: [],
+      filesError: false,
+    };
+  },
 
-  mounted: () => {
+  mounted() {
+    console.log(this.categories);
     this.$store.commit("supportModule/set_ticket", null);
   },
 
   computed: {
-    categories: () => this.$store.getters["supportModule/categories"],
+    categories() { return this.$store.getters["supportModule/categories"] },
 
-    is_loading: () => this.$store.getters["supportModule/is_loading"],
+    is_loading() { return this.$store.getters["supportModule/is_loading"] },
   },
 
   methods: {
-    on_change_message: (e) => (this.message = e.target.innerText),
+    on_change_message(e) { (this.message = e.target.innerText) },
 
-    send_message: (e) => {
+    send_message(e) {
       if (this.message !== "" && this.selected_category !== "") {
         this.$store.dispatch("supportModule/send_message", {
           message: this.message,
@@ -45,21 +48,21 @@ export default {
       }
     },
 
-    select_file: (e) => {
+    select_file(e) {
       const files = e.target.files;
 
-      for (file in files) {
+      for (const file of files) {
         if (file.size > 2097152) this.filesError = true;
         else this.files.push(file);
       }
     },
 
-    drop_file: (e, index) => {
+    drop_file(e, index) {
       this.files.splice(index, 1);
       this.filesError = false;
     },
 
-    select_category: (value) => (this.selected_category = value),
+    select_category(value) { this.selected_category = value },
   },
 };
 </script>
@@ -116,18 +119,36 @@ export default {
 <style lang="sass" scoped>
 @import @/assets/styles/vars
 
+.backward 
+  display: flex
+  font-size: .8rem
+  color: #7f8da8
+  font-weight: 500
+  align-items: center
+  text-decoration: none
+  margin: 1.5rem
+  gap: 1.2rem
+
+
 .loading
   margin-top: 2rem
 
 .support-create
   width: 100%
+  margin: 1.5rem
 
   .backward
     margin: 1.5rem
 
   .route-title
     margin: 1.5rem
-    
+    box-sizing: border-box
+    display: flex
+    font-size: .95rem
+    color: #3f64a9
+    font-weight: 500
+    line-height: 1.5rem
+
     span
       margin-left: 1rem
 
@@ -191,7 +212,7 @@ export default {
   margin-left: 70px
   width: 100%
   flex-wrap: wrap
-  
+
   &-item
     display: flex
     align-items: center
@@ -224,5 +245,4 @@ export default {
     padding: 0.25rem 1.25rem 0.75rem
     font-size: 14px
     color: $color-red
-
 </style>

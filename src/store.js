@@ -1,15 +1,15 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import dataProfile from "@/data/profile.json";
+// import dataProfile from "@/data/profile.json";
 import dataHistory from "@/data/history.json";
 import dataServices from "@/data/services.json";
 import dataServicesRequests from "@/data/services-requests.json";
-import dataSupport from "@/data/support.json";
+// import dataSupport from "@/data/support.json";
 import router from "@/router";
 import axios from "axios";
 import support from './support_module'
 
-const API_URL = "https://aostng.ru/api/lk/";
+const API_URL = "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR";
 const API_METHOD = "connect.getjur"; // getjur - VESTA; getjur2 - vesta_development
 
 Vue.use(Vuex);
@@ -32,7 +32,7 @@ export default new Vuex.Store({
     history: [],
     services: [],
     servicesRequests: [],
-    support: [],
+    supportCurator: null,
     overlay: false,
     objects: {},
     currentAgreement: {},
@@ -50,9 +50,9 @@ export default new Vuex.Store({
     setAgreements(state, updateAgreements) {
       state.agreements = updateAgreements;
     },
-    getProfile(state) {
-      state.profile = dataProfile;
-    },
+    // getProfile(state) {
+    //   state.profile = dataProfile;
+    // },
     getHistory: (state) => {
       state.history = dataHistory;
     },
@@ -62,20 +62,18 @@ export default new Vuex.Store({
     getServicesRequests: (state, data) => {
       state.servicesRequests = data;
     },
-    getSupport: (state) => {
-      state.support = dataSupport;
-    },
     showOverlay: (state) => {
-      state.overlay = true;
+        state.overlay = true;
     },
     hideOverlay: (state) => {
-      state.overlay = false;
+        state.overlay = false;
     },
-    setUser: (state, data, login) => {
+    setSupportCurator: (state, curator) => {
+      state.support = curator;
+    },
+    setUser: (state, token) => {
       state.user.isLoggedIn = true;
-      state.user.id = data.id;
-      state.user.login = login;
-      state.user.token = data.token;
+      state.user.token = token;
     },
     setRegistr: (state, value) => {
       state.user.registr = value;
@@ -137,7 +135,7 @@ export default new Vuex.Store({
             .replace("/", "")
             .replace("/", "");
           fetchBills = await fetch(
-            `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=${state.user.token}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`,
+            `${API_URL}/V1/jur_invoices?token=${state.user.token}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`,
             {
               mode: "cors",
               method: "get",
@@ -145,7 +143,7 @@ export default new Vuex.Store({
           );
         } else {
           fetchBills = await fetch(
-            `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoices?token=${state.user.token}`,
+            `${API_URL}/V1/jur_invoices?token=${state.user.token}`,
             {
               mode: "cors",
               method: "get",
@@ -187,8 +185,9 @@ export default new Vuex.Store({
         //     body: formData
         // });
 
+        console.log("Getting agreements", state.user);
         const fetchAgreements = await fetch(
-          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/info?token=${state.user.token}`,
+          `${API_URL}/info?token=${state.user.token}`,
           {
             mode: "cors",
             method: "get",
@@ -254,7 +253,7 @@ export default new Vuex.Store({
           .replace("/", "")
           .replace("/", "");
         res = await fetch(
-          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history?token=${state.user.token}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`,
+          `${API_URL}/V1/jur_history?token=${state.user.token}&beginPeriod=${beginPeriod}&endPeriod=${endPeriod}`,
           {
             mode: "cors",
             method: "get",
@@ -262,7 +261,7 @@ export default new Vuex.Store({
         );
       } else {
         res = await fetch(
-          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_history?token=${state.user.token}`,
+          `${API_URL}/V1/jur_history?token=${state.user.token}`,
           {
             mode: "cors",
             method: "get",
@@ -281,12 +280,12 @@ export default new Vuex.Store({
       }
       // ctx.commit("getServicesRequests");
     },
-    getSupport: async (ctx) => {
+    getSupportCurator: async (ctx) => {
       if (ctx.state.user.isLoggedIn) {
         console.log("Получаем куратора с сервера...");
 
-        const fetchAgreements = await fetch(
-          `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_curator?token=${ctx.state.user.token}`,
+        const fetchSupportCurator = await fetch(
+          `${API_URL}/V1/jur_curator?token=${ctx.state.user.token}`,
           {
             mode: "cors",
             method: "get",
@@ -295,20 +294,22 @@ export default new Vuex.Store({
             }) */
           }
         );
-
+        const jsonSupportCurator = await fetchSupportCurator.json();
+        
         try {
-          if (fetchAgreements.ok) {
-            const jsonAgreements = await fetchAgreements.json();
-
-            console.log("Получили куратора:", jsonAgreements.data);
+          if (fetchAgreements.data?.error === false) {
+              ctx.commit("setSupportCurator", jsonSupportCurator.data);
+                
+              console.log("Получили куратора:", jsonSupportCurator.data);
+              return jsonSupportCurator.data;
           } else {
-            console.error("Error:", fetchAgreements.json());
+              console.error("Error:", fetchAgreements.json());
+              return jsonSupportCurator.data;
           }
         } catch {
           console.error("Error: fetch api-url not send");
         }
       }
-      ctx.commit("getSupport");
     },
     showOverlay: (ctx) => {
       ctx.commit("showOverlay");
@@ -336,7 +337,7 @@ export default new Vuex.Store({
         // });
 
         const res = await fetch(
-          "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/login",
+          `${API_URL}/V1/login`,
           {
             mode: "cors",
             method: "post",
@@ -364,10 +365,10 @@ export default new Vuex.Store({
             Vue.cookie.set("contrName", json.data.name, {
               expires: "2h",
             });
-            Vue.cookie.set("profileData", JSON.stringify(json.data), {
+            Vue.cookie.set("profileData", JSON.stringify({...json.data, login: userObject.login}), {
               expires: "2h",
             });
-            ctx.commit("setUser", json.data, userObject.login);
+            ctx.commit("setUser", json.data.token);
             console.log("set token: ", json.data.token, JSON.stringify(json.data));
           } else {
             return json;
@@ -378,7 +379,7 @@ export default new Vuex.Store({
     forgotUser: async (ctx, userObject) => {
       console.log("pass recovery");
       const res = await fetch(
-        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_restore",
+        `${API_URL}/V1/jur_restore`,
         {
           mode: "cors",
           method: "post",
@@ -400,7 +401,7 @@ export default new Vuex.Store({
     saveProfile: async (ctx, userObject) => {
       console.log("profile saved", userObject);
       const res = await fetch(
-        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_save",
+        `${API_URL}/V1/jur_save`,
         {
           mode: "cors",
           method: "post",
@@ -427,7 +428,7 @@ export default new Vuex.Store({
     savePassword: async (ctx, userObject) => {
       console.log("save password");
       const res = await fetch(
-        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_save",
+        `${API_URL}/V1/jur_save`,
         {
           mode: "cors",
           method: "post",
@@ -453,7 +454,7 @@ export default new Vuex.Store({
       if (Vue.cookie.get("token")) {
         console.log("Получаем токен из куки...");
         
-        if (router.currentRoute.path !== '/registr') {
+        if (router.currentRoute.path !== '/registr' && router.currentRoute.path !== '/agreements/') {
           router.push('/agreements/')
         }
         ctx.commit("setUser", Vue.cookie.get("token"));
@@ -567,7 +568,7 @@ export default new Vuex.Store({
     getPDFFile: async (ctx, data) => {
       console.log("pdf file id/", data);
       const res = await fetch(
-        `https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_invoice_image?token=${ctx.state.user.token}&id=${data}`,
+        `${API_URL}/V1/jur_invoice_image?token=${ctx.state.user.token}&id=${data}`,
         {
           mode: "cors",
           method: "get",
@@ -637,7 +638,7 @@ export default new Vuex.Store({
       console.log(indicationsData, "indications data");
 
       const res = await fetch(
-        "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/jur_indications",
+        `${API_URL}/V1/jur_indications`,
         {
           mode: "cors",
           method: "post",
@@ -679,6 +680,13 @@ export default new Vuex.Store({
         return json;
       }
       console.log("Ошибка отправки запроса: -> sendIndication");
+    },
+    
+    getRegData: async (ctx) => {
+      const res = await fetch(`${API_URL}/V1/reg_details`);
+      const json = await res.json();
+      
+      return json;
     },
   },
   getters: {

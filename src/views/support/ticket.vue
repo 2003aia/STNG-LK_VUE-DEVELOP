@@ -6,14 +6,18 @@ import Loading from "@/components/loading";
 export default {
   name: "SupportTicket",
 
-  data() { 
+  data() {
     return {
+      profile: {
+        id: "",
+        login: "",
+      },
       message: "",
       files: [],
       filesError: false,
       selected_ticket: null,
-      }
-    },
+    };
+  },
 
   components: {
     "c-icon": Icon,
@@ -26,22 +30,37 @@ export default {
       await this.$store.dispatch("supportModule/init");
     }
 
-    await this.$store.dispatch("supportModule/get_messages", this.$route.params.id);
+    await this.$store.dispatch(
+      "supportModule/get_messages",
+      this.$route.params.id
+    );
     this.scroll_chat();
   },
 
   computed: {
-    tickets() { return this.$store.getters["supportModule/tickets"] },
+    tickets() {
+      return this.$store.getters["supportModule/tickets"];
+    },
 
-    ticket() { return this.$store.getters["supportModule/ticket"] },
+    ticket() {
+      return this.$store.getters["supportModule/ticket"];
+    },
 
-    messages() { return this.$store.getters["supportModule/messages"] },
+    messages() {
+      return this.$store.getters["supportModule/messages"];
+    },
 
-    is_loading() { return this.$store.getters["supportModule/is_loading"] },
+    is_loading() {
+      return this.$store.getters["supportModule/is_loading"];
+    },
+
+    ticket_route() {
+      return this.$route.params.id;
+    },
   },
 
   watch: {
-    "this.$route.params.id": async (value) => {
+    async ticket_route(value) {
       await this.$store.dispatch("supportModule/get_messages", value);
 
       this.scroll_chat();
@@ -49,7 +68,9 @@ export default {
   },
 
   methods: {
-    selectTicket(ticket_id) { this.selected_ticket = ticket_id },
+    selectTicket(ticket_id) {
+      this.selected_ticket = ticket_id;
+    },
 
     drop_file(e, index) {
       this.filesError = false;
@@ -63,20 +84,22 @@ export default {
       const files = e.target.files;
       this.filesError = false;
 
-      for (file in files) {
+      for (const file of files) {
         if (file.size > 2097152) this.filesError = true;
         else this.files.push(file);
       }
     },
 
-    scroll_chat(){
+    scroll_chat() {
       this.$refs.scrollTop = this.$refs.offsetHeight + 1000;
     },
 
-    on_change_message(e) {(this.message = e.target.innerText)},
+    on_change_message(e) {
+      this.message = e.target.innerText;
+    },
 
     async send_message(e) {
-      console.log("I'm here")
+      console.log("I'm here");
       if (this.message !== "" && this.ticket) {
         await this.$store.dispatch("supportModule/send_message", {
           message: this.message,

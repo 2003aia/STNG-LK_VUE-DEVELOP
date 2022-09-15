@@ -72,8 +72,8 @@
         .error(v-else)
             h1 {{ error }}            
     LayoutSidebar
-        router-link(to="#") Все обращения
-        SidebarSupport
+        router-link(to="/support/") Все обращения
+        SidebarSupport(:items="tickets")
 </template>
 
 <script>
@@ -136,10 +136,13 @@ export default {
         },
         is_loading() {
             return this.$store.getters.is_loading
-        }
+        },
+        tickets() {
+            return this.$store.getters["supportModule/tickets"];
+        },
     },
-    mounted(){
-        
+    async mounted(){
+        await this.$store.dispatch("supportModule/init");
         this.$data.data = this.getBills.filter((el)=>el.active ===true)
     }
 }

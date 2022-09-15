@@ -59,7 +59,10 @@ export default {
   name: "Profile",
   data() {
     return {
-      profile: {
+        profile: {
+        token: "",
+        id: "",
+        login: "",
         familia: "",
         imya: "",
         otchestvo: "",
@@ -81,7 +84,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getProfile");
+    // this.$store.dispatch("getProfile");
 
     this.profile = JSON.parse(Vue.cookie.get("profileData"));
   },
@@ -90,6 +93,8 @@ export default {
       const token = Vue.cookie.get("token");
       const userObject = {
         token: token,
+        id: this.profile.id,
+        login: this.profile.login,
         phone: this.profile.phone,
         familia: this.profile.familia,
         imya: this.profile.imya,

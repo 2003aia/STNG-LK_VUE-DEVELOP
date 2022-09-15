@@ -17,7 +17,8 @@
 </template>
 
 <script>
-import moment from 'moment'
+import Vue from "vue";
+import moment from 'moment';
 
 import {
     Button, Icon
@@ -29,6 +30,10 @@ export default {
     name: 'Requests',
     data () {
         return {
+            profile: {
+                id: "",
+                login: "",
+            },
             tabs: [
                 {
                     label: 'Обращения',
@@ -48,14 +53,11 @@ export default {
         routeName() { return this.$route.name; }
     },
     methods: {
-        async initSupport(){
-            await this.$store.dispatch('supportModule/init');
-        }
+
     },
 
     async mounted () {
-        console.log(this.$route.name)
-        await this.$store.dispatch('supportModule/init');
+        await this.$store.dispatch("supportModule/init");
     },
     components: {
         Button, Icon
@@ -71,10 +73,9 @@ export default {
                 })
             }
         },
-        
-        routeName(value) {
-            if (value === 'support'){
-                this.initSupport();
+        async routeName(value) {
+            if (value === 'support') {
+                await this.$store.dispatch("supportModule/init");
             }
         },
     }
