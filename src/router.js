@@ -48,6 +48,11 @@ const router = new VueRouter({
             component: Auth
         },
         {
+            path: "/registr",
+            component: Auth,
+            
+        },
+        {
             path: "/bills",
             component: Bills,
             children: [

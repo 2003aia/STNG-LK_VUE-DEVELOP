@@ -24,6 +24,7 @@ export default new Vuex.Store({
       login: null,
       token: null,
       isLoggedIn: false,
+      registr: ''
     },
     bills: {},
     agreements: [],
@@ -75,6 +76,10 @@ export default new Vuex.Store({
       state.user.id = data.id;
       state.user.login = login;
       state.user.token = data.token;
+    },
+    setRegistr: (state, value) => {
+      state.user.registr = value;
+      state.user.isLoggedIn = false
     },
     setObjects: (state, obj) => {
       state.objects = obj;
@@ -444,15 +449,18 @@ export default new Vuex.Store({
       }
     },
     init: async (ctx) => {
-      console.log("Инициализация...");
+      console.log("Инициализация...", router.currentRoute, window.location.href);
       if (Vue.cookie.get("token")) {
         console.log("Получаем токен из куки...");
+        
+        if (router.currentRoute.path !== '/registr') {
+          router.push('/agreements/')
+        }
         ctx.commit("setUser", Vue.cookie.get("token"));
       } else {
         if (router.currentRoute.query.token) {
           const token = router.currentRoute.query.token;
           const profileData = router.currentRoute.query
-          console.log(profileData, '////init test', router.currentRoute.query.profileData)
          
           ctx.commit("setUser", token);
           Vue.cookie.set("token", token);
@@ -460,11 +468,13 @@ export default new Vuex.Store({
           Vue.cookie.set('contrName', profileData.name)
           router.push('/agreements/')
         }
-        /* if (router.currentRoute.query.token) {
-          console.log()
-          Vue.cookie.set("token", router.currentRoute.query.token)
-        } */
+     
         console.log("Токен отсутствует в куки, требуется авторизация...");
+      } 
+      if (router.currentRoute.path === '/registr') {
+        ctx.commit("setRegistr", 'reg');
+        console.log('registr')
+        
       }
     },
     getObjects: async ({ commit, state }, agreementId) => {

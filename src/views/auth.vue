@@ -42,11 +42,9 @@
                             .auth__fieldset(v-for="(section, idx) in currentData.sections" :key="idx")
                                 .auth__fieldset-title {{section.title}}
                                 .auth__fieldset-item(v-for="(elem, idx) in section.fields" :key="idx")
-                                    ol.files(v-if="elem.type === 'file'")
-                                        li(v-for="(file, fIdx) in elem.value" :key="fIdx") 
-                                            span {{file.title}} 
-                                            span(@click="elem.value.splice(fIdx, 1)" style="cursor: pointer;") (удалить)
+                                    
                                     Input(:label="elem.title" v-model="elem.value" :type="elem.type" v-if="elem.type !== 'file' && elem.model !== 'PROP_INN'")
+                                    
                                     .input(v-if="elem.model === 'PROP_INN'" style="z-index: 10")
                                         .input__input
                                             multiselect(
@@ -72,9 +70,15 @@
                                                         span.option__title {{ props.option.data.inn }}
                                                         span.option__small {{ props.option.value }}
                                             .input__label(style="z-index: 0") {{ elem.title }}
-                                    label(v-if="elem.type === 'file'" class="auth__field-file")
-                                        span Прикрепить "{{ elem.title }}"
-                                        input(:type="elem.type" @change="loadFile" :data-prop="elem.id")
+                                    
+                                    label.test(v-if="elem.type === 'file'" class="auth__field-file")
+                                        span.test Прикрепить "{{ elem.title }}"
+                                        input.test(:type="elem.type" @change="loadFile" :data-prop="elem.id")
+                                    br    
+                                    ol.files(v-if="elem.type === 'file'")
+                                        li(v-for="(file, fIdx) in elem.value" :key="fIdx") 
+                                            span {{file.title}} 
+                                            span(@click="elem.value.splice(fIdx, 1)" style="cursor: pointer;") (удалить)
                             .auth__field-item
                                 label.checklist__item
                                     input(v-model="privacy" type="checkbox")
@@ -152,8 +156,14 @@ export default {
     isLoggedIn() {
       return this.$store.getters.cuser.isLoggedIn;
     },
+    isMobile() {
+      return screen.width < 760;
+    },
     currentData() {
       return this.regData[this.activeClientTab];
+    },
+    registrUrl() {
+      return this.$store.state.user.registr;
     },
     formatedForm: function () {
       let result = {};
@@ -190,10 +200,12 @@ export default {
   },
   mounted() {
     console.log(this.page, "page");
+    if (this.$router.currentRoute.path === "/registr") {
+      this.$data.page = "reg";
+    }
     if (this.isLoggedIn) {
       console.log("Вы авторизованы, покиньте страницу...");
     } else {
-     
       fetch("https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_details")
         .then((res) => res.json())
         .then((data) => {
@@ -380,10 +392,22 @@ export default {
 <style scoped lang="sass">
 @import ~@/assets/styles/vars
 
+.test
+    // background: red
 .files
     margin: 0
-    li
-        margin-bottom: 1rem
+    // background: red
+    max-width: 50%
+    // display: flex
+    // flex-direction:  row
+    @media screen and (max-width: $mobile-width)
+      max-width: 100%
+      // background: red
+    li  
+        font-size: 13px
+        // margin-bottom: 1rem
+        word-break: break-all
+        // display: flex
 .auth
     display: flex
     flex: 1
@@ -392,13 +416,17 @@ export default {
     background: #F3F6FA
 
     &__container
-        max-width: 360px
+        // max-width: 360px
+        max-width: 560px
         width: 100%
+        // background: red
     &__wrapper
         display: flex
         flex-direction: column
     &__card
         background: #FFFFFF
+
+        // background: red
         box-shadow: 0 2px 4px #E7EDF6
         border-radius: 4px
         margin-bottom: 16px
@@ -460,6 +488,13 @@ export default {
             margin: 1rem 0
         &-item
             margin-bottom: 16px
+            display: flex
+            @media screen and (max-width: $mobile-width)
+              // background: red
+              display: block
+              
+
+              // margin-top: 20px
             &:last-child
                 margin-bottom: 0
     &__error
@@ -476,10 +511,21 @@ export default {
     margin-left: 20px
     line-height: 48px
 .app__header-logo2
-    width: 100%
+    width: 288px
+    margin: auto
+    // display: flex
+    // justify-content: center
+    // align-items: center
     padding: 0
     img
       width: 100%
+    @media screen and (max-width: $mobile-width)
+      width: 80%
+      margin: auto
+
+      padding: 0
+      img
+        width: 100%
 
 .button
     background: $color-primary
@@ -503,6 +549,7 @@ export default {
     justify-content: center
     text-align: center
     background: #FFFFFF
+    // background: blue
     border: 1px dashed #E6ECF5
     border-radius: 4px
     padding: 12px
@@ -511,7 +558,9 @@ export default {
     line-height: 24px
     color: #3F64A9
     cursor: pointer
-
+    width: 50%
+    @media screen and (max-width: $mobile-width)
+      width: 100%
     input[type='file']
         position: absolute
         left: -9999px
