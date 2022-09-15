@@ -397,10 +397,16 @@ export default {
 .files
     margin: 0
     // background: red
+    max-width: 50%
     // display: flex
     // flex-direction:  row
-    li
-        margin-bottom: 1rem
+    @media screen and (max-width: $mobile-width)
+      max-width: 100%
+      // background: red
+    li  
+        font-size: 13px
+        // margin-bottom: 1rem
+        word-break: break-all
         // display: flex
 .auth
     display: flex
@@ -486,7 +492,7 @@ export default {
             @media screen and (max-width: $mobile-width)
               // background: red
               display: block
-
+              
 
               // margin-top: 20px
             &:last-child
@@ -543,6 +549,7 @@ export default {
     justify-content: center
     text-align: center
     background: #FFFFFF
+    // background: blue
     border: 1px dashed #E6ECF5
     border-radius: 4px
     padding: 12px
@@ -551,8 +558,9 @@ export default {
     line-height: 24px
     color: #3F64A9
     cursor: pointer
-    width: 100%
-
+    width: 50%
+    @media screen and (max-width: $mobile-width)
+      width: 100%
     input[type='file']
         position: absolute
         left: -9999px
