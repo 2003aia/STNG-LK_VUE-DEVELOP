@@ -40,78 +40,66 @@ export default{
   },
 
   actions: {
-    init: async (ctx) => {
-      ctx.commit('set_loading', true);
+    init: async ({ state, commit, dispatch, rootState }) => {
+      commit('set_loading', true);
   
       let form_data = new FormData();
       form_data.append ('method', 'services.getticketlist');
       form_data.append ('ul_web_token', ul_web_token);
-      form_data.append ('login', ctx.rootState.user.login);
-      form_data.append ('user_id', ctx.rootState.user.id);
+      form_data.append ('login', rootState.user.login);
+      form_data.append ('user_id', rootState.user.id);
       
-      const res = await fetch (api_url, ({
-        mode: 'cors',
-        method: 'post',
-        body: form_data,
-      }))
+      console.log(rootState)
+      console.log(rootState.user.login, rootState.user.id, ul_web_token)
+      // const res = await fetch (api_url, ({
+      //   mode: 'cors',
+      //   method: 'post',
+      //   body: form_data,
+      // }))
   
-      const json = await res.json();
+      // const json = await res.json();
   
-      ctx.commit('set_loading', false)
-      console.log(json)
+      // ctx.commit('set_loading', false)
+      // console.log(json)
   
-      if (json.response && json.response.msg){
-        let categories = json.response.category_array;
-        let tickets = [];
+      // if (json.response && json.response.msg){
+      //   let categories = json.response.category_array;
+      //   let tickets = [];
   
-        [...json.response.msg].forEach((ticket, ticket_i) => {
-          let category_index = categories.findIndex((item) =>
-            item.id === ticket.category_id);
+      //   [...json.response.msg].forEach((ticket, ticket_i) => {
+      //     let category_index = categories.findIndex((item) =>
+      //       item.id === ticket.category_id);
   
-          if (category_index !== -1){
+      //     if (category_index !== -1){
   
-            tickets.push({
-              id: ticket.id,
-              date: ticket.date_create,
-              color: ticket.lamp,
-              category_name: categories[category_index].name,
-              category_id: ticket.category_id,
-              name: ticket.title,
-              messages_count: ticket.messages,
-            });
-          }
-        });
+      //       tickets.push({
+      //         id: ticket.id,
+      //         date: ticket.date_create,
+      //         color: ticket.lamp,
+      //         category_name: categories[category_index].name,
+      //         category_id: ticket.category_id,
+      //         name: ticket.title,
+      //         messages_count: ticket.messages,
+      //       });
+      //     }
+      //   });
 
-        console.log(tickets)
-        ctx.commit('set_tickets', tickets);
+      //   console.log(tickets)
+      //   ctx.commit('set_tickets', tickets);
 
-      }
+      // }
   
-      if(json.response?.category_array){
-        let categories = []
+      // if(json.response?.category_array){
+      //   let categories = []
   
-        for(const item in json.response.category_array)
-          categories.push({
-            label: item.name,
-            value: item.id,
-          })
+      //   for(const item in json.response.category_array)
+      //     categories.push({
+      //       label: item.name,
+      //       value: item.id,
+      //     })
   
-        ctx.commit('set_categories', categories)
-      }
-
-      if(!json.response){
-        let tickets = [];
-        tickets.push({
-          id: 1,
-          date: '12.09.2022',
-          color: 'red',
-          category_name: 'New Category Name',
-          category_id: 1,
-          name: "New Name",
-          messages_count: 1,
-        });
-        ctx.commit('set_tickets', tickets);
-      }
+      //   ctx.commit('set_categories', categories)
+      // }
     },
 
     send_message: async (ctx, data) => {
