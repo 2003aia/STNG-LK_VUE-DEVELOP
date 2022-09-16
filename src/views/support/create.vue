@@ -35,6 +35,10 @@ export default {
     categories() { return this.$store.getters["supportModule/categories"] },
 
     is_loading() { return this.$store.getters["supportModule/is_loading"] },
+
+    supportCurator() {
+      return this.$store.getters["supportModule/supportCurator"];
+    },
   },
 
   methods: {
@@ -42,10 +46,11 @@ export default {
 
     async send_message(e) {
       if (this.message !== "" && this.selected_category !== "") {
-        if(!this.$store.getters["supportCurator"]){
-            await this.$store.dispatch("getSupportCurator");
+        if (!this.supportCurator){
+          await this.$store.dispatch("supportModule/getSupportCurator");
         }
-        this.$store.dispatch("supportModule/send_message", {
+
+        await this.$store.dispatch("supportModule/send_message", {
           message: this.message,
           category_id: this.selected_category.value,
           files: this.files,

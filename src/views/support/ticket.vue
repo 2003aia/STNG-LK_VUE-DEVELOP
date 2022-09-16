@@ -26,9 +26,6 @@ export default {
   },
 
   async mounted() {
-    if(!this.$store.getters["supportCurator"]){
-      await this.$store.dispatch("getSupportCurator");
-    }
     if (this.ticket === null) {
       await this.$store.dispatch("supportModule/init");
     }
@@ -58,6 +55,10 @@ export default {
       return this.$store.getters["supportModule/is_loading"];
     },
 
+    supportCurator() {
+      return this.$store.getters["supportModule/supportCurator"];
+    },
+
     ticket_route() {
       return this.$route.params.id;
     },
@@ -65,9 +66,6 @@ export default {
 
   watch: {
     async ticket_route(value) {
-      if(!this.$store.getters["supportCurator"]){
-        await this.$store.dispatch("getSupportCurator");
-      }
       await this.$store.dispatch("supportModule/get_messages", value);
 
       this.scroll_chat();
@@ -108,9 +106,10 @@ export default {
     async send_message(e) {
       console.log("I'm here");
       if (this.message !== "" && this.ticket) {
-        if(!this.$store.getters["supportCurator"]){
-            await this.$store.dispatch("getSupportCurator");
+        if (!this.supportCurator){
+          await this.$store.dispatch("supportModule/getSupportCurator");
         }
+
         await this.$store.dispatch("supportModule/send_message", {
           message: this.message,
           category_id: this.ticket.category_id,

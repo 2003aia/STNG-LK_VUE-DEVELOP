@@ -8,12 +8,14 @@
             .history__table-cell(style="width: 60%") № счета
             .history__table-cell(style="width: 60%") Дата
             .history__table-cell(style="width: 60%") Задолженность
+            .history__table-cell(style="width: 60%") Статус
             //- .history__table-cell(style="width: 60%") Введите сумму
             .history__table-cell Действия
         .history__table-row(v-for="bill in getBills" :key="bill.id")
             .history__table-cell(style="width: 60%") {{ bill.number }}
             .history__table-cell(style="width: 60%") {{ bill.date }}
             .history__table-cell(style="width: 60%") {{ formatPrice(bill['summ']) }}
+            .history__table-cell(style="width: 60%") {{ bill.status }}
             //- .history__table-cell(style="width: 60%")
                 input(v-if="bill['summ'] !== 0" type="number" v-model="bill['toPay']" placeholder="Введите сумму")
                 span(v-if="bill['summ'] === 0") {{ formatPrice(0) }}
@@ -114,7 +116,7 @@ export default {
                 (this.connect.toPay === '' ? 0 : +this.connect.toPay)
         },
         getPDFId (id) {
-            // console.log(id, 'input pdf')
+            // //console.log(id, 'input pdf')
             this.$store.dispatch('getPDFFile', id).then(()=>{
             })
         }
@@ -139,6 +141,8 @@ export default {
     mounted(){
         
         this.$data.bills = this.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
+
+        console.log("bills", this.$data.bills)
         
        /*  this.$data.bills.forEach((el)=>{
             this.$store.dispatch('getPDFFile', el.id).then(()=>{

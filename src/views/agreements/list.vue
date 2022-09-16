@@ -14,7 +14,8 @@
                 angle
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
                 :contrName="name"
-                :inn="inn.inn"
+                :inn="profileData.inn"
+                :debt="formatNumber(agreement.debt)",
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"
@@ -48,7 +49,8 @@
                 angle
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
                 :contrName="name"
-                :inn="inn.inn"
+                :inn="profileData.inn"
+                :debt="formatNumber(agreement.debt)",
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"
@@ -106,6 +108,11 @@ export default {
     methods: {
         activeHandler() {
             this.$data.active = !this.$data.active
+        },
+
+        formatNumber(num){
+            const number = (num < 0) ? num * -1 : num;
+            return number;
         }
     },
     components: { Card, LayoutSidebar, SidebarSupport, Button, Loading },
@@ -113,7 +120,7 @@ export default {
         isMobile () {
             return screen.width < 760
         },
-        inn() {
+        profileData() {
             return JSON.parse(Vue.cookie.get('profileData'))
         },
         name() {
@@ -142,9 +149,6 @@ export default {
         },
     },
     async mounted(){
-        if(!this.$store.getters["supportCurator"]){
-            await this.$store.dispatch("getSupportCurator");
-        }
         await this.$store.dispatch("supportModule/init");
         this.$data.data = this.getBills.filter((el)=>el.active ===true)
     }

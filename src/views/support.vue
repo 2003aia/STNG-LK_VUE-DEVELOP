@@ -57,9 +57,6 @@ export default {
     },
 
     async mounted () {
-        if(!this.$store.getters["supportCurator"]){
-            await this.$store.dispatch("getSupportCurator");
-        }
         await this.$store.dispatch("supportModule/init");
     },
     components: {
@@ -78,9 +75,6 @@ export default {
         },
         async routeName(value) {
             if (value === 'support') {
-                if(!this.$store.getters["supportCurator"]){
-                    await this.$store.dispatch("getSupportCurator");
-                }
                 await this.$store.dispatch("supportModule/init");
             }
         },

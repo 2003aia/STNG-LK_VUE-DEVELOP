@@ -14,6 +14,8 @@
         span {{contrName}} 
     .card__subtitle ИНН:  
         span {{inn}}    
+    .card__subtitle Долг:  
+        span {{debt}}    
     .card__content
         slot
         .card__content-client(v-if="$slots.client")
@@ -38,6 +40,7 @@ export default {
     index: Number,
     contrName: String,
     inn: String,
+    debt: Number,
   },
   computed: {
     classObject() {

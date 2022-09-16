@@ -2,7 +2,14 @@ import Vue from "vue";
 import router from "@/router";
 
 const API_UL_URL = "https://api.aostng.ru/api/lkul/";
+const API_1C_URL = "https://1c.aostng.ru/VESTA/hs/API_STNG_JUR";
 const ul_web_token = "69d2ed93-7286-4f2f-b690-c9cf47f05be4";
+
+function validateEmail(email) {
+  return email.match(
+    /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  );
+};
 
 export default {
   namespaced: true,
@@ -14,6 +21,7 @@ export default {
     messages: [],
     ticket: null,
     is_loading: false,
+    supportCurator: null,
   },
   getters: {
     is_loading: (state) => state.is_loading,
@@ -25,6 +33,8 @@ export default {
     ticket: (state) => state.ticket,
 
     messages: (state) => state.messages,
+
+    supportCurator: (state) => state.supportCurator,
   },
   mutations: {
     set_loading: (state, value) => (state.is_loading = value),
@@ -36,23 +46,26 @@ export default {
     set_messages: (state, value) => (state.messages = value),
 
     set_ticket: (state, value) => (state.ticket = value),
+
+    set_support_curator: (state, curator) => (state.supportCurator = curator),
   },
 
   actions: {
     init: async (ctx) => {
       ctx.commit("set_loading", true);
       const profileData = JSON.parse(Vue.cookie.get("profileData"));
+      console.log("Init email", validateEmail(profileData.email));
 
       let form_data = new FormData();
       form_data.append("method", "services.getticketlist");
       form_data.append("ul_web_token", ul_web_token);
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
-      form_data.append("email", profileData.email);
+      form_data.append("email", validateEmail(profileData.email) ? profileData.email : 'user_ul@aostng.ru' );
 
-      form_data.append("curator", ctx.rootGetters["supportCurator"]);
+      // form_data.append("curator", ctx.rootGetters["supportCurator"]);
 
-      console.log("init support", profileData.login, profileData.id, ctx.rootGetters["supportCurator"]);
+      console.log("init support", profileData.login, profileData.id, ctx.state.supportCurator);
 
       const res = await fetch(API_UL_URL, {
         mode: "cors",
@@ -117,9 +130,9 @@ export default {
       form_data.append("ul_web_token", ul_web_token);
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
-      form_data.append("email", profileData.email);
+      form_data.append("email", validateEmail(profileData.email) ? profileData.email : 'user_ul@aostng.ru' );
 
-      form_data.append("curator", ctx.rootGetters["supportCurator"]);
+      form_data.append("curator", ctx.state.supportCurator);
 
       for (const file of data.files) {
         form_data.append("files[]", file);
@@ -166,9 +179,9 @@ export default {
       form_data.append("ul_web_token", ul_web_token);
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
-      form_data.append("email", profileData.email);
+      form_data.append("email", validateEmail(profileData.email) ? profileData.email : 'user_ul@aostng.ru' );
 
-      form_data.append("curator", ctx.rootGetters["supportCurator"]);
+      // form_data.append("curator", ctx.rootGetters["supportCurator"]);
 
       let tickets = ctx.state.tickets;
 
@@ -193,6 +206,25 @@ export default {
       console.log("messages ", json.response.msg);
       if (json.response.msg) {
         ctx.commit("set_messages", json.response.msg.slice().reverse());
+      }
+    },
+
+    getSupportCurator: async (ctx) => {
+      console.log(ctx.rootGetters["cuser"].isLoggedIn)
+      if (ctx.rootGetters["cuser"].isLoggedIn) {
+        console.log("Получаем куратора с сервера...");
+
+        const fetchSupportCurator = await fetch(
+          `${API_1C_URL}/V1/jur_curator?token=${ctx.rootGetters["cuser"].token}`,
+          {
+            mode: "cors",
+            method: "get"
+          }
+        );
+        const jsonSupportCurator = await fetchSupportCurator.json();
+        
+        console.log("Получили куратора:", jsonSupportCurator.data);
+        ctx.commit("set_support_curator", jsonSupportCurator.data);
       }
     },
   },

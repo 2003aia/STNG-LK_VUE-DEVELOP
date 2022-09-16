@@ -3,7 +3,7 @@ import Vuex from "vuex";
 // import dataProfile from "@/data/profile.json";
 import dataHistory from "@/data/history.json";
 import dataServices from "@/data/services.json";
-import dataServicesRequests from "@/data/services-requests.json";
+// import dataServicesRequests from "@/data/services-requests.json";
 // import dataSupport from "@/data/support.json";
 import router from "@/router";
 import axios from "axios";
@@ -32,7 +32,6 @@ export default new Vuex.Store({
     history: [],
     services: [],
     servicesRequests: [],
-    supportCurator: null,
     overlay: false,
     objects: {},
     currentAgreement: {},
@@ -67,9 +66,6 @@ export default new Vuex.Store({
     },
     hideOverlay: (state) => {
         state.overlay = false;
-    },
-    setSupportCurator: (state, curator) => {
-      state.support = curator;
     },
     setUser: (state, token) => {
       state.user.isLoggedIn = true;
@@ -164,7 +160,7 @@ export default new Vuex.Store({
             console.error("Error:", fetchBills.json().error);
           }
         } catch {
-          console.error("Error: fetch api-url not send");
+          console.error("Error getBills: fetch api-url not send");
         }
       }
     },
@@ -226,7 +222,7 @@ export default new Vuex.Store({
             console.error("Error:", fetchAgreements.json());
           }
         } catch {
-          console.error("Error: fetch api-url not send");
+          console.error("Error getAgreements: fetch api-url not send");
         }
       }
       commit("setLoading", false);
@@ -279,37 +275,6 @@ export default new Vuex.Store({
         }
       }
       // ctx.commit("getServicesRequests");
-    },
-    getSupportCurator: async (ctx) => {
-      if (ctx.state.user.isLoggedIn) {
-        console.log("Получаем куратора с сервера...");
-
-        const fetchSupportCurator = await fetch(
-          `${API_URL}/V1/jur_curator?token=${ctx.state.user.token}`,
-          {
-            mode: "cors",
-            method: "get",
-            /* body: JSON.stringify({
-                token: ctx.state.user.token,
-            }) */
-          }
-        );
-        const jsonSupportCurator = await fetchSupportCurator.json();
-        
-        try {
-          if (fetchAgreements.data?.error === false) {
-              ctx.commit("setSupportCurator", jsonSupportCurator.data);
-                
-              console.log("Получили куратора:", jsonSupportCurator.data);
-              return jsonSupportCurator.data;
-          } else {
-              console.error("Error:", fetchAgreements.json());
-              return jsonSupportCurator.data;
-          }
-        } catch {
-          console.error("Error: fetch api-url not send");
-        }
-      }
     },
     showOverlay: (ctx) => {
       ctx.commit("showOverlay");
