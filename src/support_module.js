@@ -50,7 +50,9 @@ export default {
       form_data.append("user_id", profileData.id);
       form_data.append("email", profileData.email);
 
-      console.log("init support", profileData.login, profileData.id);
+      form_data.append("curator", ctx.rootGetters["supportCurator"]);
+
+      console.log("init support", profileData.login, profileData.id, ctx.rootGetters["supportCurator"]);
 
       const res = await fetch(API_UL_URL, {
         mode: "cors",
@@ -117,6 +119,8 @@ export default {
       form_data.append("user_id", profileData.id);
       form_data.append("email", profileData.email);
 
+      form_data.append("curator", ctx.rootGetters["supportCurator"]);
+
       for (const file of data.files) {
         form_data.append("files[]", file);
       }
@@ -163,6 +167,8 @@ export default {
       form_data.append("login", profileData.login);
       form_data.append("user_id", profileData.id);
       form_data.append("email", profileData.email);
+
+      form_data.append("curator", ctx.rootGetters["supportCurator"]);
 
       let tickets = ctx.state.tickets;
 

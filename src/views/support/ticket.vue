@@ -1,5 +1,5 @@
 <script>
-import Icon from "@/components/icon";
+import Icon from "@/components/icon-create-ticket";
 import SidebarSupport from "@/components/sidebar-support";
 import Loading from "@/components/loading";
 
@@ -26,6 +26,9 @@ export default {
   },
 
   async mounted() {
+    if(!this.$store.getters["supportCurator"]){
+      await this.$store.dispatch("getSupportCurator");
+    }
     if (this.ticket === null) {
       await this.$store.dispatch("supportModule/init");
     }
@@ -62,6 +65,9 @@ export default {
 
   watch: {
     async ticket_route(value) {
+      if(!this.$store.getters["supportCurator"]){
+        await this.$store.dispatch("getSupportCurator");
+      }
       await this.$store.dispatch("supportModule/get_messages", value);
 
       this.scroll_chat();
@@ -102,6 +108,9 @@ export default {
     async send_message(e) {
       console.log("I'm here");
       if (this.message !== "" && this.ticket) {
+        if(!this.$store.getters["supportCurator"]){
+            await this.$store.dispatch("getSupportCurator");
+        }
         await this.$store.dispatch("supportModule/send_message", {
           message: this.message,
           category_id: this.ticket.category_id,
@@ -185,7 +194,7 @@ export default {
 .ticket
   flex-grow: 0
   flex-shrink: 1
-  height: calc(100% - 61px)
+  height: calc(100% - 65px)
 
   .router-link-active
     border-bottom: 1px #3F64A9
@@ -223,8 +232,11 @@ export default {
 
   &__chat
     flex-grow: 1
-    position: relative
+    // position: relative
     border-left: 1px solid $color-border
+    height: calc(100% - 61px)
+    display: flex
+    flex-direction: column
 
     @media screen and (max-width:700px)
       width: 100vw
@@ -236,16 +248,18 @@ export default {
     flex-grow: 1
     display: flex
     flex-direction: column
-    height: calc(100vh - 123px - 61px)
+    height: calc(100vh - 123px - 26px)
     overflow-y: auto
     width: 100%
 
     .backward
+      cursor: pointer
       margin: 1.5rem 1.5rem 0
       display: none
 
       @media screen and (max-width:700px)
         display: flex
+        gap: 1.5rem
 
     &::-webkit-scrollbar
       width: 4px
@@ -272,7 +286,7 @@ export default {
       flex-direction: column
       justify-content: flex-end
       padding: 0 1.5rem
-      margin-bottom: 80px
+      // margin-bottom: 80px
 
       .message
         margin-bottom: 2rem
@@ -319,13 +333,16 @@ export default {
   .input
     min-height: 60px
     flex-shrink: 0
-    position: absolute
+    // position: absolute
     border-top: 1px solid $color-border
     bottom: 0
     width: 100%
     max-width: 100%
     background: white
     padding-top: 0
+
+    // @media screen and (max-width:700px)
+      // width: calc(100vw - (100vw - 100%))
 
     &-wrapper
       display: flex

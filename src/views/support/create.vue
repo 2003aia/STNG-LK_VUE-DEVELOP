@@ -40,8 +40,11 @@ export default {
   methods: {
     on_change_message(e) { (this.message = e.target.innerText) },
 
-    send_message(e) {
+    async send_message(e) {
       if (this.message !== "" && this.selected_category !== "") {
+        if(!this.$store.getters["supportCurator"]){
+            await this.$store.dispatch("getSupportCurator");
+        }
         this.$store.dispatch("supportModule/send_message", {
           message: this.message,
           category_id: this.selected_category.value,
@@ -140,7 +143,7 @@ export default {
 
 .support-create
   width: 100%
-  margin: 1.5rem
+  padding: 1.5rem
 
   .backward
     margin: 1.5rem
