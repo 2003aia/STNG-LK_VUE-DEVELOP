@@ -141,7 +141,7 @@ export default {
 <style lang="sass">
 @import @/assets/styles/vars
 
-.profile
+// .profile
 .text
     color: $color-primary
     // margin-bottom: 0px

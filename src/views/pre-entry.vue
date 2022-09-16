@@ -79,5 +79,5 @@ export default {
 </script>
 
 <style lang="sass">
-.pre-entry
+// .pre-entry
 </style>

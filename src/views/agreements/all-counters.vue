@@ -133,7 +133,7 @@ export default {
 <style lang="sass">
 @import ~@/assets/styles/vars
 
-.agreements-address-counter
+// .agreements-address-counter
 .notice
   padding: 24px 24px 0
   color: #3F64A9

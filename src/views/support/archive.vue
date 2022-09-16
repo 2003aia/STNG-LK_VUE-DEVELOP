@@ -9,5 +9,5 @@ export default {
 </script>
 
 <style lang="sass">
-.support-archive
+// .support-archive
 </style>

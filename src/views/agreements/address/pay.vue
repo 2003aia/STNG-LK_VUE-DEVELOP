@@ -191,5 +191,5 @@ export default {
 <style lang="sass">
 @import @/assets/styles/vars
 
-.agreements-address-pay
+// .agreements-address-pay
 </style>
