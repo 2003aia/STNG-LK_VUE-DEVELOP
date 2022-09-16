@@ -72,13 +72,19 @@ export default {
             &_heading
                 .history__table-cell
                     color: $color-font-mute
-        
+
         &-cell
             width: 100%
             flex-grow: 1
-            line-height: 56px
+            line-height: 1.5rem
             font-size: .8125rem
             color: $color-font
+            padding: 6px 0
+            display: flex
+            align-items: center
+
+            &:nth-of-type(2)
+                justify-content: center
 
             span
                 color: $color-primary

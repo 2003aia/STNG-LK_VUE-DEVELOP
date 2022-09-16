@@ -15,7 +15,7 @@
                 :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
                 :contrName="name"
                 :inn="profileData.inn"
-                :debt="formatNumber(agreement.debt)",
+                :debt="agreement.debt",
                 :index="agreementIndex"
                 menu
                 :key="agreementIndex"
