@@ -52,7 +52,6 @@ export default {
 @import @/assets/styles/vars
 
 .support-list
-  border-right: 1px solid $color-border
   
   .router-link-active
     border-bottom: 1px #3F64A9

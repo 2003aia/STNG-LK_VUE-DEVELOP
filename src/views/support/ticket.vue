@@ -183,11 +183,9 @@ export default {
 @import @/assets/styles/vars
 
 .ticket
-  height: 100%
-  display: flex
-  flex-direction: column
-  width: 100%
-  position: relative
+  flex-grow: 0
+  flex-shrink: 1
+  height: calc(100% - 61px)
 
   .router-link-active
     border-bottom: 1px #3F64A9
@@ -226,6 +224,7 @@ export default {
   &__chat
     flex-grow: 1
     position: relative
+    border-left: 1px solid $color-border
 
     @media screen and (max-width:700px)
       width: 100vw

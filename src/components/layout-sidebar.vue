@@ -15,10 +15,13 @@ export default {
 .layout-sidebar
     width: 18rem
     flex-shrink: 0
-    padding: 1.5rem
+    padding-top: 1.5rem
     border-left: 1px solid $color-border
     height: 100%
 
     @media screen and (max-width: $mobile-width)
         display: none
+
+    a
+        padding: 1.5rem
 </style>

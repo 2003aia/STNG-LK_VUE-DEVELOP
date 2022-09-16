@@ -152,4 +152,31 @@ export default {
 @import @/assets/styles/vars
 
 .agreements-list
+    display: flex
+    flex-direction: row
+    width: 100%
+
+    .layout__tabs
+        line-height: 1.15
+        box-sizing: border-box
+        display: flex
+        padding: 0 0.5rem
+
+    .layout__tabs-item_active
+        border-bottom: 1px #3F64A9
+        color: #3F64A9 !important
+
+    .layout__tabs-item
+        box-sizing: border-box
+        line-height: 1.5rem
+        margin: 0 1rem
+        display: flex
+        padding: 1.125rem 0 calc(1.125rem - 2px)
+        color: #7F8DA8
+        text-decoration: none
+        font-weight: 500
+
+    .layout__main
+        flex-grow: 1
+
 </style>
