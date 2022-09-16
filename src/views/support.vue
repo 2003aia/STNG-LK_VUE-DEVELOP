@@ -58,12 +58,14 @@ export default {
 
     async mounted () {
         await this.$store.dispatch("supportModule/init");
+
     },
     components: {
         Button, Icon
     },
     watch:{
         tickets(value) {
+            console.log(value, this.routeName)
             if (value.length > 0 && this.routeName === 'support'){
                 this.$router.push({
                     name: 'support-ticket',

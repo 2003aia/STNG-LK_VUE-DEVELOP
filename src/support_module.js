@@ -100,7 +100,7 @@ export default {
           }
         });
 
-        console.log(tickets);
+        console.log("ticket ", json.response);
         ctx.commit("set_tickets", tickets);
       }
 
