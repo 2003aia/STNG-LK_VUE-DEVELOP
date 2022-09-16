@@ -52,12 +52,20 @@ export default {
 @import @/assets/styles/vars
 
 .support-list
+  border-right: 1px solid $color-border
+  
+  .router-link-active
+    border-bottom: 1px #3F64A9
+    color: #3F64A9 !important
+
   .item
     padding: 1rem 1.5rem
     border-bottom: 1px solid $color-border
     cursor: pointer
     display: block
     text-decoration: none
+
+
 
     &_active
       background: $color-secondary

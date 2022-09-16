@@ -1,316 +1,135 @@
-<template lang="pug">
-.layout.support.layout_column
-    .support__mobile-back(v-if="isMobile && mobileScreen === 'chat'")
-        a(@click="mobileScreen = 'requests'")
-            img(src="@/assets/images/back-triangle.svg")
-            span Назад
-    .layout__top(
-        :style="{borderBottom:isMobile?'1px solid #E6ECF5':''}"
-        v-if="($route.name !== 'support-create' && !isMobile) || ($route.name !== 'support-create' && isMobile && mobileScreen === 'requests')")
-        .layout__tabs
-            router-link.layout__tabs-item(to="/support" :class="{'layout__tabs-item_active': $route.name === 'support'}") Обращения
-            router-link.layout__tabs-item(to="/support/archive" :class="{'layout__tabs-item_active': $route.name === 'support-archive'}") Архив
-        .layout__actions
-            Button(class="button_new-request" variety="white" icon="new-message" iconRight to="/support/create") Новое обращение
-    .layout__content
-        router-view
-</template>
-
 <script>
-import Vue from "vue";
-import moment from 'moment';
-
+import Tabs from '@/components/tabs';
+// import Button from '@/components/button';
+import Icon from '@/components/icon-create-ticket';
+// import SupportList from '@/components/support-list';
 import {
-    Button, Icon
-} from '@/components'
+  Button,
+  SupportList,
+} from "@/components";
 
-moment.locale('ru')
+export default{
+    name: 'support',
+    components: {
+        'c-tabs': Tabs,
+        'c-button': Button,
+        'c-icon': Icon,
+        'c-support-list': SupportList,
+    },
+    
+    computed: {
+        tickets() { return this.$store.getters['supportModule/tickets']; },
 
-export default {
-    name: 'Requests',
-    data () {
-        return {
-            profile: {
-                id: "",
-                login: "",
-            },
-            tabs: [
-                {
-                    label: 'Обращения',
-                    path: '/support'
-                },
-            ]
+        route_name() {return this.$route.name; },
+    },
+  
+    data(){
+        return{
+            tabs: [{
+              label: 'Обращения',
+              path: '/support'
+            }]
+        };
+    },
+  
+    watch: {
+        tickets(value) {
+            if (value.length > 0 && this.$route.name == 'support')
+              this.$router.push({
+                  name: 'support-ticket',
+                  params:{
+                      id: value[0].id
+                  },
+              });
+        },
+    
+        async route_name(value) {
+            if (value == 'support'){
+                await this.$store.dispatch('supportModule/init');
+            }
         }
     },
-    computed: {
-        isMobile () {
-            return screen.width < 760
-        },
-        currentRoute () { return this.$route.params.currentRoute },
-    
-        tickets() { return this.$store.getters['supportModule/tickets'] },
-
-        routeName() { return this.$route.name; }
-    },
-    methods: {
-
-    },
-
-    async mounted () {
-        await this.$store.dispatch("supportModule/init");
-    },
-    components: {
-        Button, Icon
-    },
-    watch:{
-        tickets(value) {
-            if (value.length > 0 && this.routeName === 'support'){
-                this.$router.push({
-                    name: 'support-ticket',
-                    params:{
-                        id: value[0].id
-                    }
-                })
-            }
-        },
-        async routeName(value) {
-            if (value === 'support') {
-                await this.$store.dispatch("supportModule/init");
-            }
-        },
+  
+    async mounted(){
+        await this.$store.dispatch('supportModule/init')
     }
+
 }
 </script>
 
-<style lang="sass">
+<template lang="pug">
+.support
+  .actions(v-if="$route.name !== 'support-create'")
+    c-tabs(:items="tabs")
+
+    .create
+      c-button(bg="white" color="primary" border="white" size="big" to="/support/create")
+        span Новое обращение
+        c-icon(color="primary" icon="new-message")
+
+  .body
+    router-view
+</template>
+
+<style lang="sass" scoped>
 @import @/assets/styles/vars
-@import @/assets/styles/layout
 
 .support
-    border-right: 1px solid $color-border
+  border-right: 1px solid $color-border
+  display: flex
+  flex-direction: column
+  height: calc(100vh - 123px)
 
-    @media screen and (max-width: $mobile-width)
-        border-right: none
+  &-list
+    max-height: 0
 
-    .button_new-request
-        @media screen and (max-width: $mobile-width)
-            span
-                display: none
+  .actions
+    display: flex
+    border-bottom: 1px solid $color-border
+    align-items: center
+    justify-content: space-between
+    flex-shrink: 0
+    flex-grow: 0
 
-    &__mobile-back
-        padding: 16px 16px 0
-        font:
-            size: 13px
-            weight: 500
+  .body
+    display: flex
+    flex-grow: 0
+    flex-shrink: 1
+    height: calc(100% - 61px)
 
-        a
-            display: inline-flex
-            align-items: center
-            color: $color-font-mute
+    .not
+      padding: 1.5rem
+      font-size: 13px
+      color: $color-font-mute
 
-            img
-                margin-right: 5px
+    .tickets
+      width: 18rem
+      flex:
+        shrink: 0
+        grow: 0
+      border:
+        right: 1px solid $color-border
+      overflow-y: auto
+      // height: calc(100vh - 61px - 84px)
 
-    &__back
-        padding: 16px
-        border-bottom: 1px solid $color-border
-        color: $color-font-mute
-        display: flex
-        align-items: center
-
-        img
-            width: 6px
-
-        span
-            margin-left: 16px
-
-    &__layout
+      &::-webkit-scrollbar
+        width:  8px
         height: 100%
-        display: flex
 
-    &__requests
-        width: 311px
-        flex-shrink: 0
-        border-right: 1px solid $color-border
+      &::-webkit-scrollbar-thumb
+        background: $color-border
 
-        @media screen and (max-width: $mobile-width)
-            width: 100%
-            border-right: none
-            display: none
-            padding: 0 16px
+      &::-webkit-scrollbar-track
+        background: none
 
-            &_active
-                @media screen and (max-width: $mobile-width)
-                    display: block
+    .chat
+      flex-grow: 0
+      flex-shrink: 1
+      width: 100%
 
-    &__scrollable
-        overflow-y: auto
-        flex-grow: 1
-
-        &::-webkit-scrollbar
-            width:  6px
-            height: 100%
-
-        &::-webkit-scrollbar-thumb
-            background: $color-border
-            border-radius: 3px
-
-        &::-webkit-scrollbar-track
-            background: none
-
-    &__chat
-        flex-grow: 1
-        height: calc(100vh - 146px)
-        border-top: 1px solid $color-border
-        flex:
-            direction: column
-
-        @media screen and (max-width: $mobile-width)
-            display: none
-
-        &_active
-            @media screen and (max-width: $mobile-width)
-                display: flex !important
-                border-top: none
-                height: calc(100vh - 56px - 31px)
-
-        &_active
-            display: none
-
-        &-description
-            margin: 1.5rem
-            text-align: center
-            color: $color-label
-            font-size: 13px
-            line-height: 1.5rem
-
-            @media screen and (max-width: $mobile-width)
-                margin: 16px
-                text-align: left
-
-                span
-                    font:
-                        size: 15px
-                        weight: 500
-                    line-height: 24px
-                    color: $color-primary
-
-        &-form
-            border-top: 1px solid $color-border
-            display: flex
-            justify-content: space-between
-            align-items: flex-start
-            padding: 1rem 1.5rem
-            position: relative
-
-            &-placeholder
-                position: absolute
-                font-size: 13px
-                line-height: 1.5rem
-                left: 4.1rem
-                z-index: -1
-                color: $color-label
-
-            .icon
-                margin-top: .2rem
-                cursor: pointer
-            
-            &-input
-                width: 100%
-                margin: 0 1.5rem
-                font-size: 13px
-                line-height: 1.5rem
-
-                &:focus
-                    outline: none
-
-    &__messages
-        flex-grow: 1
-        padding: 0 1.5rem
-        display: flex
-        flex:
-            direction: column
-        align-items: flex-end
-
-        @media screen and (max-width: $mobile-width)
-            padding: 0 16px
-
-    &__message
-        width: 443px
-        flex-shrink: 0
-        padding: 1rem
-        background: $color-secondary
-        position: relative
-        border-radius: 8px 8px 0 8px
-        margin-bottom: 2rem
-        font-size: 13px
-        line-height: 1.5rem
-
-        @media screen and (max-width: $mobile-width)
-            width: calc(100vw - 16px - 32px)
-
-        &-date
-            color: $color-font-mute
-
-        &-angle
-            position: absolute
-            right: 0
-            bottom: -14px
-
-        &_answer
-            border-radius: 8px 8px 8px 0
-            background: $color-primary
-            color: #fff
-            align-self: flex-start
-
-            .support__message-date
-                color: $color-font-mute-light
-
-            .support__message-angle
-                left: 0
-                right: auto
-                transform: scale(-1, 1)
-
-    &__request
-        border-top: 1px solid $color-border
-        padding: 1rem 1.5rem
-        font-size: 13px
-        line-height: 1.5rem
-        cursor: pointer
-
-        @media screen and (max-width: $mobile-width)
-            padding: 1rem 0
-            &:first-child
-                border-top: none
-
-        &:last-child
-            border-bottom: 1px solid $color-border
-
-            @media screen and (max-width: $mobile-width)
-                border-bottom: none
-
-        &-title
-            display: flex
-            align-items: center
-
-        &-status
-            width: 6px
-            height: 6px
-            border-radius: 50%
-            margin-left: 8px
-
-            &_success
-                background: $color-green
-
-            &_error
-                background: $color-red
-
-        &-number
-            color: $color-primary
-        
-        &-date
-            color: $color-font-mute
-
-        &_active
-            background: $color-secondary
+.create
+  @media screen and (max-width:700px)
+    .button
+      span
+        display: none
 </style>

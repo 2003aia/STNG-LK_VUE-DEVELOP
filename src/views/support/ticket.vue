@@ -26,7 +26,7 @@ export default {
   },
 
   async mounted() {
-    if (!this.ticket) {
+    if (this.ticket === null) {
       await this.$store.dispatch("supportModule/init");
     }
 
@@ -34,6 +34,7 @@ export default {
       "supportModule/get_messages",
       this.$route.params.id
     );
+    
     this.scroll_chat();
   },
 
@@ -187,6 +188,10 @@ export default {
   flex-direction: column
   width: 100%
   position: relative
+
+  .router-link-active
+    border-bottom: 1px #3F64A9
+    color: #3F64A9 !important
 
   &__wrapper
     display: flex

@@ -24,6 +24,11 @@ export default {
   mounted() {
     console.log(this.categories);
     this.$store.commit("supportModule/set_ticket", null);
+
+    this.selected_category = {
+      label: "Вопросы по договорам поставки газа и технического обслуживания для юридических лиц (ИП) (тарифы, сверка, задолженность/ переплата, отключение по задолженности и т.п.)",
+      value: "22"
+    };
   },
 
   computed: {
@@ -49,9 +54,9 @@ export default {
     },
 
     select_file(e) {
-      const files = e.target.files;
+      const filesSelect = e.target.files;
 
-      for (const file of files) {
+      for (const file of filesSelect) {
         if (file.size > 2097152) this.filesError = true;
         else this.files.push(file);
       }
@@ -96,7 +101,7 @@ export default {
       
       label.message-file
         c-icon.message-icon(icon="attachment" color="primary")
-        input(type="file" multiple @change="select_file")
+        input(type="file" multiple @change="select_file" accept="application/msword,application/vnd.ms-excel,application/x-msexcel,application/x-excel,application/excel,application/pdf,image/jpeg,image/png")
       
       .message-input(contenteditable @input="on_change_message" ref="chatinput")
       

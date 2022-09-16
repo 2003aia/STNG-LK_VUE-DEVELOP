@@ -141,6 +141,7 @@ export default {
 
       if (json.response.msg) {
         if (!ctx.state.ticket) {
+          ctx.dispatch("get_messages", json.response.msg);
           router.push({
             name: "support-ticket",
             params: {
@@ -167,7 +168,7 @@ export default {
 
       let ticket_index = tickets.findIndex((item) => item.id === ticket_id);
 
-      if (ticket_index !== -1) {
+      if (ticket_index != -1) {
         ctx.commit("set_ticket", tickets[ticket_index]);
       }
 
@@ -183,7 +184,8 @@ export default {
 
       ctx.commit("set_loading", false);
 
-      if (json.response?.msg) {
+      console.log("messages ", json.response.msg);
+      if (json.response.msg) {
         ctx.commit("set_messages", json.response.msg.slice().reverse());
       }
     },
