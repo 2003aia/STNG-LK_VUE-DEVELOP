@@ -28,6 +28,7 @@ import {
     AgreementsAddresses,
     AgreementsAddress,
     AgreementsAddressPay,
+    AgreementsAllCounters,
     AgreementsAddressCounters,
     AgreementsAddressBills,
     Auth
@@ -108,6 +109,7 @@ const router = new VueRouter({
                     // path: "/test",
                     component: AgreementsAddresses
                 },
+
                 {
                     name: "agreements-address",
                     path: ":id",
@@ -121,17 +123,22 @@ const router = new VueRouter({
                         //     component: AgreementsAddressPay
                         // },
                         {
+                            name: "agreements-list",
+                            path: "allcounters",
+                            component: AgreementsAllCounters
+                        },
+                        {
+                            name: "agreements-address-bills",
+                            // path: ":address/bills",
+                            path: "bills",
+                            component: AgreementsAddressBills
+                        },
+                        {
                             name: "agreements-address-counters",
                             path: ":address",
                             alias: ":address/counters",
                             component: AgreementsAddressCounters
                         },
-                        {
-                            name: "agreements-address-bills",
-                            // path: ":address/bills",
-                            path: ":id/bills",
-                            component: AgreementsAddressBills
-                        }
                     ]
                 }
             ]

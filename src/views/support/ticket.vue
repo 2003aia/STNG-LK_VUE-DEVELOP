@@ -233,7 +233,7 @@ export default {
     flex-grow: 1
     // position: relative
     border-left: 1px solid $color-border
-    height: calc(100% - 61px)
+    // height: calc(100% - 147px)
     display: flex
     flex-direction: column
 

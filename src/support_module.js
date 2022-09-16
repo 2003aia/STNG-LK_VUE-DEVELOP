@@ -132,7 +132,7 @@ export default {
       form_data.append("user_id", profileData.id);
       form_data.append("email", validateEmail(profileData.email) ? profileData.email : 'user_ul@aostng.ru' );
 
-      form_data.append("curator", ctx.state.supportCurator);
+      form_data.append("curator", ctx.state.supportCurator ? ctx.state.supportCurator : 'Кабинет юр лиц' );
 
       for (const file of data.files) {
         form_data.append("files[]", file);
@@ -154,21 +154,11 @@ export default {
 
       const json = await res.json();
 
-      ctx.commit("set_loading", false);
+      
+      console.log("message id", json.response.msg)
+      await ctx.dispatch("get_messages", json.response.msg);
 
-      if (json.response.msg) {
-        if (!ctx.state.ticket) {
-          ctx.dispatch("get_messages", json.response.msg);
-          router.push({
-            name: "support-ticket",
-            params: {
-              id: json.response.msg,
-            },
-          });
-        } else {
-          ctx.dispatch("get_messages", json.response.msg);
-        }
-      }
+      ctx.commit("set_loading", false);
     },
 
     get_messages: async (ctx, ticket_id) => {

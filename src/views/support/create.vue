@@ -18,6 +18,7 @@ export default {
       message: "",
       files: [],
       filesError: false,
+      is_loading_local: false,
     };
   },
 
@@ -58,6 +59,10 @@ export default {
 
         this.message = "";
         this.filesError = false;
+
+        this.$router.push({
+            name: "support",
+          });
       }
     },
 

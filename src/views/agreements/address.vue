@@ -3,8 +3,9 @@
   loading.layout__main(getter="is_loading", v-if="is_loading")
   .layout__main(v-else)
     //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
-    Back(
       :goto="!$route.path.includes('/bills') ? `/agreements/${$route.params.id}` : `/agreements/`",
+    Back(
+      goto="/agreements/",
       v-if="!isMobile"
     )
 
@@ -17,12 +18,12 @@
         .layout__tabs
           router-link.layout__tabs-item(
             v-if="!$route.params.id.includes('/bills')",
-            :to="`/agreements/${$route.params.id}/${$route.params.address}/counters`",
-            :class="{ 'layout__tabs-item_active': $route.name === 'agreements-address-counters' }"
+            :to="`/agreements/${$route.params.id}/allcounters`",
+            :class="{ 'layout__tabs-item_active': $route.name === 'agreements-address-allcounters' }"
           ) Показания счетчиков
           //router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-pay'}") Оплата
           router-link.layout__tabs-item(
-            :to="`/agreements/${$route.params.id}/${$route.params.id}/bills`",
+            :to="`/agreements/${$route.params.id}/bills`",
             :class="{ 'layout__tabs-item_active': $route.name === 'agreements-address-bills' }"
           ) Счета
 
