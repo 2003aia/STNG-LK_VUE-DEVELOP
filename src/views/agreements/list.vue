@@ -6,8 +6,8 @@
         //-         router-link.layout__tabs-item(to="/agreements/" :class="{'layout__tabs-item_active': active}") Активные
         //-     div(@click="activeHandler")
         //-         router-link.layout__tabs-item(to="/agreements/" :class="{'layout__tabs-item_active': !active}" ) Неактивные
-        loading(getter="is_loading")
-        .bills-list(v-if="error === '' && active")
+        loading(getter="is_loading", v-if="is_loading")
+        .bills-list(v-if="!is_loading && error === '' && active")
             
             Card(
                 v-for="(agreement, agreementIndex) in getBills"

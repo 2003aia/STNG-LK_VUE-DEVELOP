@@ -608,7 +608,7 @@ export default new Vuex.Store({
         });
       });
 
-      console.log("Отправляем показания:", data);
+      console.log("Инфо:", data);
       console.log("Отфильтрованное инфо:", formatData);
       console.log("Форматированное инфо:", mappedData);
 
