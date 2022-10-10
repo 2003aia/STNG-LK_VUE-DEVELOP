@@ -150,8 +150,8 @@ export default {
         .title
           .name Обращение №{{ ticket.id }}
           .description Категория: {{ ticket.category_name }}
-        .messages(v-if="messages" :style="[files.length > 0 ? {'margin-bottom': '125px'} : '']")
-          .message(v-for="message in messages" :class="{ answer: message.support_message }")
+        .messages(:style="[files.length > 0 ? {'margin-bottom': '125px'} : '']")
+          .message(v-if="messages" v-for="message in messages" :class="{ answer: message.support_message }")
             .message-text {{ message.message }}
             .message-files(v-if="message.files != null")
               .files-item(v-for="file in message.files" )

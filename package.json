@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@babel/compat-data": "^7.11.0",
+    "@volar/vue-language-plugin-pug": "^1.0.3",
     "@vue/cli-plugin-babel": "^4.1.0",
     "@vue/cli-plugin-router": "^4.1.0",
     "@vue/cli-plugin-vuex": "^4.1.0",

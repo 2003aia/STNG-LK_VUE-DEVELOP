@@ -35,8 +35,8 @@
             v-model="item.value",
             placeholder="Введите показания"
           )
-  .notice(v-if="notice")
-    p {{ notice }}
+  .notice(v-if="notices.length > 0" )
+    p(v-for="notice in notices") {{ notice.message }}
   .bills-counter__footer.bills-counter__footer_variant
     .bills-counter__description В случае неправильного ввода показаний, следует обратиться в отдел по работе с предприятиями УГРС по телефонам: 46-00-62, 46-00-73, 46-00-20, 46-00-25
     .bills-counter__submit
@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       records: [],
-      notice: "",
+      notices: [],
       objectId: "",
     };
   },
@@ -72,27 +72,55 @@ export default {
       return deadline >= moment() ? "#7F8DA8" : "#C10909";
     },
     sendIndication() {
-      let is_can = false;
-
+      let sendRecord = [];
+      this.notices = [];
       for (const record of this.records) {
         let old_indication_str = record.old_indication + "";
 
         if (record.value !== "") {
-          if (+record.value < record.old_indication)
-            return (this.notice = `Показания по счетчику ${record.name} меньше предыдущих показаний`);
-          if (record.value.length - old_indication_str > 2)
-            return (this.notice = `Показания по счетчику ${record.name} слишком большая разница между текущими и предыдущими показаниями`);
+          if (+record.value < +record.old_indication)
+            this.notices.push({ error: true, message: `${record.name}: Показания по счетчику меньше предыдущих показаний` });
+          if (record.value.length - old_indication_str.length > 2)
+            this.notices.push({ error: true, message: `${record.name}: Cлишком большая разница между текущими и предыдущими показаниями` });
 
-          this.notice = "";
-          is_can = true;
+          sendRecord.push(record);
         }
       }
 
-      if (is_can) {
-        this.$store.dispatch("sendIndication", this.records).then((res) => {
-          this.notice = res;
+      if (this.notices.length > 0)
+        return;
+
+      this.notices.push({ error: false, message: "Показания отправлены, подождите ответа" });
+
+      this.$store.dispatch("sendIndication", sendRecord).then((res) => {
+        if(!res || res.length === 0){
+          return;
+        }
+        if(res[0].message == "Прием показаний производится с 25 числа текущего месяца по 1 число следующего за отчетным. Передача показаний приборов учета в другие дни производится непосредственно куратору."){
+          this.notices = [{error: true, message: "Прием показаний производится с 25 числа текущего месяца по 1 число следующего за отчетным. Передача показаний приборов учета в другие дни производится непосредственно куратору."}];
+          this.records.forEach((o, i) => this.records[i].value = "")
+          return;
+        }
+
+        this.notices = [];
+        this.notices = res.map(({ error, message }, index) => {
+          const newMessage = sendRecord[index].name + ": " + message;
+
+          if (error === false) {
+            const newVal = sendRecord[index].value
+            this.records.find((o, i) => {
+              if (o.counterId === sendRecord[index].counterId) {
+                this.records[i] = { ...this.records[i], value: "", old_indication: newVal};
+                return true; // stop searching
+              }
+            });
+          }
+
+          return { error: error, message: newMessage };
         });
-      }
+
+        console.log("errors", this.notices);
+      });
     },
   },
   computed: {
@@ -105,13 +133,30 @@ export default {
     getBills() {
       return this.getCounters.objects;
     },
+
+    filteredRecords() {
+      let filRecords = []
+      for (const record of this.records) {
+        let old_indication_str = record.old_indication + "";
+
+        if (record.value !== "") {
+          if (+record.value < +record.old_indication)
+            continue;
+          if (record.value.length - old_indication_str > 2)
+            continue;
+
+          filRecords.push(record);
+        }
+      }
+      return filRecords;
+    }
   },
   mounted() {
     const objects = this.getCounters.objects;
     console.log("Counters ", objects)
 
     if (objects.length !== 0) {
-      [...objects].forEach((object)=>{
+      [...objects].forEach((object) => {
         for (const counter of object.counters) {
           this.records.push({
             counterId: counter.Id,

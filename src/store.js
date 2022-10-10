@@ -554,7 +554,7 @@ export default new Vuex.Store({
     },
 
     sendIndication: async (ctx, data) => {
-      ctx.commit("setLoading", true);
+      // ctx.commit("setLoading", true);
 
       // const obj = {
       //   counters: [],
@@ -575,10 +575,6 @@ export default new Vuex.Store({
 
       // Turn incoming data into key value pairs
       const formatData = data.reduce((accumulator, current)=>{
-        if(current.value === ""){
-          return accumulator;
-        }
-
         if(!accumulator[current.agreementId]){
           accumulator[current.agreementId] = {};
         }
@@ -660,16 +656,16 @@ export default new Vuex.Store({
         const json = await res.json();
         console.log({json});
         
-        if (json.error === false) {
+        if (json.some(elem => elem.error === false)) {
           console.log("Показания отправлены на сервер.");
-          ctx.commit("setLoading", false);
+          // ctx.commit("setLoading", false);
           await ctx.dispatch("getAgreements");
 
           //   await ctx.dispatch("getObjects", router.currentRoute.params.id);
-          return "Показания отправлены на сервер.";
+          return json;
         }
 
-        ctx.commit("setLoading", false);
+        // ctx.commit("setLoading", false);
         return json;
       }
       console.log("Ошибка отправки запроса: -> sendIndication");
