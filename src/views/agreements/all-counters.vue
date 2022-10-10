@@ -7,7 +7,7 @@
       .history__table-cell Дата поверки
       .history__table-cell Новые показания
     .history__table-row(v-for="item in records", :key="item.id")
-      .history__table-cell {{ item.counterId }}
+      .history__table-cell {{ item.name }}
       .history__table-cell {{ item.old_indication }}
       .history__table-cell {{ item.date }}
         //div(:style="{color:getColor(item.date)}") {{ item.date }}
@@ -19,7 +19,7 @@
         )
   .mobile-table.mobile-table_variant(v-if="isMobile")
     .mobile-table__item(v-for="item in records", :key="item.id")
-      .mobile-table__title {{ item.counterId }}
+      .mobile-table__title {{ item.name }}
       .mobile-table__field
         .mobile-table__key Показания счетчика
         .mobile-table__value {{ item.old_indication }}
@@ -74,14 +74,14 @@ export default {
     sendIndication() {
       let is_can = false;
 
-      for (let record of this.records) {
+      for (const record of this.records) {
         let old_indication_str = record.old_indication + "";
 
         if (record.value !== "") {
           if (+record.value < record.old_indication)
-            return (this.notice = `Показания по счетчику ${record.counterId} меньше предыдущих показаний`);
+            return (this.notice = `Показания по счетчику ${record.name} меньше предыдущих показаний`);
           if (record.value.length - old_indication_str > 2)
-            return (this.notice = `Показания по счетчику ${record.counterId} слишком большая разница между текущими и предыдущими показаниями`);
+            return (this.notice = `Показания по счетчику ${record.name} слишком большая разница между текущими и предыдущими показаниями`);
 
           this.notice = "";
           is_can = true;
@@ -114,14 +114,13 @@ export default {
       [...objects].forEach((object)=>{
         for (const counter of object.counters) {
           this.records.push({
-            counterId: counter.counter,
-            counterNumber: counter.Id,
+            counterId: counter.Id,
             value: "",
             old_indication: counter.Indication,
             date: counter.dateEnd,
             name: counter["counter"],
-            agreementId: this.$route.params.address,
-            objectId: counter.objectId,
+            agreementId: this.$route.params.id,
+            objectId: object.objectId,
           });
         }
       });

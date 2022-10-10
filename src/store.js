@@ -552,14 +552,15 @@ export default new Vuex.Store({
       }
       console.log("Ошибка отправки запроса: -> getPDFFile");
     },
+
     sendIndication: async (ctx, data) => {
       ctx.commit("setLoading", true);
 
-      const obj = {
-        counters: [],
-      };
+      // const obj = {
+      //   counters: [],
+      // };
 
-      const objects = JSON.parse(JSON.stringify(data));
+      // const objects = JSON.parse(JSON.stringify(data));
 
       //   for (let i = 0; i < objects.length; i++) {
       //     let counter = objects[i];
@@ -570,37 +571,78 @@ export default new Vuex.Store({
       //       });
       //     }
       //   }
-      const json_string = JSON.stringify(obj.counters);
+      // const json_string = JSON.stringify(obj.counters);
 
-      console.log("Отправляем показания:", json_string);
+      // Turn incoming data into key value pairs
+      const formatData = data.reduce((accumulator, current)=>{
+        if(current.value === ""){
+          return accumulator;
+        }
 
-      const formData = new FormData();
+        if(!accumulator[current.agreementId]){
+          accumulator[current.agreementId] = {};
+        }
+        if(!accumulator[current.agreementId][current.objectId]){
+          accumulator[current.agreementId][current.objectId] = {};
+        }
+
+        accumulator[current.agreementId][current.objectId][current.counterId] = current.value;
+        return accumulator;
+      }, []);
+
+      // Turn formatted data into array of objects {id, objects}
+      let mappedData = Object.keys(formatData).map((key)=>{
+        return {id: key, objects: formatData[key]};
+      });
+
+      // Turn objects into array of objects {id, counters}
+      mappedData.forEach((agreement, indexAgr)=>{
+        mappedData[indexAgr].objects = Object.keys(agreement.objects).map((key)=>{
+          return {id: key, counters: agreement.objects[key]};
+        });
+      });
+
+      // Turn counters into array of objects {id, value}
+      mappedData.forEach((agreement, indexAgr)=>{
+        agreement.objects.forEach((object, indexObj)=>{
+
+          mappedData[indexAgr].objects[indexObj].counters =  Object.keys(object.counters).map((key)=>{
+            return {id: key, value: object.counters[key]};
+          });
+        });
+      });
+
+      console.log("Отправляем показания:", data);
+      console.log("Отфильтрованное инфо:", formatData);
+      console.log("Форматированное инфо:", mappedData);
+
+      // const formData = new FormData();
       //   console.log(objects, 'objects ////////')
-      formData.append("method", API_METHOD);
-      formData.append("method_connect", "objects");
-      formData.append("get", `token=${ctx.state.user.token}`);
-      formData.append("json", json_string);
+      // formData.append("method", API_METHOD);
+      // formData.append("method_connect", "objects");
+      // formData.append("get", `token=${ctx.state.user.token}`);
+      // formData.append("json", json_string);
 
-      const indicationsData = {
-        token: ctx.state.user.token,
-        agreements: [
-          {
-            id: router.currentRoute.params.id,
-            objects: [
-              {
-                id: router.currentRoute.params.address,
-                counters: [
-                  {
-                    id: objects[0].counterNumber,
-                    value: objects[0].value,
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      };
-      console.log(indicationsData, "indications data");
+      // const indicationsData = {
+      //   token: ctx.state.user.token,
+      //   agreements: [
+      //     {
+      //       id: router.currentRoute.params.id,
+      //       objects: [
+      //         {
+      //           id: router.currentRoute.params.address,
+      //           counters: [
+      //             {
+      //               id: objects[0].counterId,
+      //               value: objects[0].value,
+      //             },
+      //           ],
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // };
+      // console.log(indicationsData, "indications data");
 
       const res = await fetch(
         `${API_URL}/V1/jur_indications`,
@@ -609,29 +651,15 @@ export default new Vuex.Store({
           method: "post",
           body: JSON.stringify({
             token: ctx.state.user.token,
-            agreements: [
-              {
-                id: router.currentRoute.params.id,
-                objects: [
-                  {
-                    id: router.currentRoute.params.address,
-                    counters: [
-                      {
-                        id: objects[0].counterNumber,
-                        value: objects[0].value,
-                      },
-                    ],
-                  },
-                ],
-              },
-            ],
+            agreements: mappedData,
           }),
         }
       );
 
       if (res.ok) {
         const json = await res.json();
-
+        console.log({json});
+        
         if (json.error === false) {
           console.log("Показания отправлены на сервер.");
           ctx.commit("setLoading", false);
