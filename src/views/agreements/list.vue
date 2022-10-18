@@ -12,7 +12,7 @@
             Card(
                 v-for="(agreement, agreementIndex) in getBills"
                 angle
-                :title="agreement.number ? `Договор №${agreement.number}` : agreement.name"
+                :title="agreement.name"
                 :contrName="name"
                 :inn="profileData.inn"
                 :debt="agreement.debt",
@@ -20,7 +20,7 @@
                 menu
                 :key="agreementIndex"
                 )
-                template(v-slot:card)
+                //- template(v-slot:card)
                     .bills-list__card-menu(v-if="openedMenu.includes(agreementIndex)")
                         router-link(to="#").bills-list__card-menu-item История
                         router-link(to="#").bills-list__card-menu-item Удалить
@@ -34,11 +34,11 @@
                 template(v-slot:footer)
                     //- Button(variety="white" :to="`/bills/history/`") Адреса
 
-                    Button(v-if="agreement.objects.length !== 0" variety="primary-light" :to="`/agreements/${agreement.id}/allcounters`") Внести показания
+                    Button(v-if="agreement.objects.length !== 0" variety="white" :to="`/agreements/${agreement.id}/allcounters`") Внести показания
                     //- Button(variety="primary-light" :to="`/agreements/${agreement.id}/${agreement.id}/bills`" v-if="!isMobile") История
-                    Button(variety="primary-light" :to="`/agreements/${agreement.id}/bills`" v-if="!isMobile") Счета
+                    Button(variety="white" :to="`/agreements/${agreement.id}/bills`") Счета
                     
-                    Button(variety="primary-light-outline" v-if="!isMobile") Удалить
+                    //- Button(variety="primary-light-outline" v-if="!isMobile") Удалить
             //- Button(variety="add-list") Добавить договор
 
         //- .error(v-else)

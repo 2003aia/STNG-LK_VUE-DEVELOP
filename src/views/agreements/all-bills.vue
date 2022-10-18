@@ -124,7 +124,7 @@ export default {
     },
     computed: {
         isMobile () {
-            return screen.width < 760;
+            return this.$screen.width < 760;
         },
         getBills () {
             return this.$store.getters.getBills.filter((el)=>el.agreement.id === this.$route.params.id)

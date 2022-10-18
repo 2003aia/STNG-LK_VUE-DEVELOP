@@ -6,8 +6,8 @@
         img(src="@/assets/images/bill-big-icon2.svg")
     .card__angle(v-if="angle")
         img(src="@/assets/images/angle.svg")
-    .card__menu(v-if="menu" @click="menuToggle")
-        img(src="@/assets/images/dots.svg")
+    //-.card__menu(v-if="menu" @click="menuToggle")
+    //-    img(src="@/assets/images/dots.svg")
     slot(name="card")
     .card__title {{ title }}
     .card__subtitle Имя контрагента:  
@@ -15,7 +15,7 @@
     .card__subtitle ИНН:  
         span {{inn}}    
     .card__subtitle Долг:  
-        span {{debt}}    
+        span {{ formatPrice(debt) }}    
     .card__content
         slot
         .card__content-client(v-if="$slots.client")
@@ -61,6 +61,9 @@ export default {
       } else {
         this.$parent.openedMenu.splice(result, 1);
       }
+    },
+    formatPrice (value) {
+      return value.toLocaleString('ru-RU') + ' руб.'
     },
   },
 };
