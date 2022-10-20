@@ -106,10 +106,6 @@ export default {
     async send_message(e) {
       console.log("I'm here");
       if (this.message !== "" && this.ticket) {
-        if (!this.supportCurator){
-          await this.$store.dispatch("supportModule/getSupportCurator");
-        }
-
         await this.$store.dispatch("supportModule/send_message", {
           message: this.message,
           category_id: this.ticket.category_id,

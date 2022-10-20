@@ -65,6 +65,10 @@ export default {
 
       // form_data.append("curator", ctx.rootGetters["supportCurator"]);
 
+      if (!ctx.state.supportCurator){
+        await ctx.dispatch("getSupportCurator");
+      }
+
       console.log("init support", profileData.login, profileData.id, ctx.state.supportCurator);
 
       const res = await fetch(API_UL_URL, {

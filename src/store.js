@@ -79,8 +79,10 @@ export default new Vuex.Store({
       state.objects = obj;
     },
     logoutUser: (state) => {
-      state.user.isLoggedIn = false;
-      state.user.token = null;
+      // state.user.isLoggedIn = false;
+      // state.user.token = null;
+      localStorage.clear();
+      window.location.reload();
     },
     setCurrentAgreement: (state, object = {}) => {
       state.currentAgreement = object;
@@ -517,6 +519,12 @@ export default new Vuex.Store({
       console.log("Завершаем сеанс...");
       if (Vue.cookie.get("token")) {
         Vue.cookie.delete("token");
+      }
+      if (Vue.cookie.get("contrName")) {
+        Vue.cookie.delete("contrName");
+      }
+      if (Vue.cookie.get("profileData")) {
+        Vue.cookie.delete("profileData");
       }
       ctx.commit("logoutUser");
     },

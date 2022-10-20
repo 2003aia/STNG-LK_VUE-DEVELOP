@@ -47,10 +47,6 @@ export default {
 
     async send_message(e) {
       if (this.message !== "" && this.selected_category !== "") {
-        if (!this.supportCurator){
-          await this.$store.dispatch("supportModule/getSupportCurator");
-        }
-
         await this.$store.dispatch("supportModule/send_message", {
           message: this.message,
           category_id: this.selected_category.value,

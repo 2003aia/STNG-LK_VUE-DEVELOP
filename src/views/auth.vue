@@ -43,7 +43,7 @@
                                 .auth__fieldset-title {{section.title}}
                                 .auth__fieldset-item(v-for="(elem, idx) in section.fields" :key="idx")
                                     
-                                    Input(:label="elem.title" v-model="elem.value" :type="elem.type" v-if="elem.type !== 'file' && elem.model !== 'PROP_INN'")
+                                    Input(:label="`${elem.title}${elem.required?'*':''}`" v-model="elem.value" :type="elem.type" v-if="elem.type !== 'file' && elem.model !== 'PROP_INN'")
                                     
                                     .input(v-if="elem.model === 'PROP_INN'" style="z-index: 10")
                                         .input__input
@@ -51,7 +51,6 @@
                                                 v-model="elem.value" 
                                                 :options="dadataValues" 
                                                 @search-change="asyncFind" 
-                                                label="value" 
                                                 :show-labels="false"
                                                 open-direction="bottom"
                                                 :loading="isLoading"
@@ -60,6 +59,8 @@
                                                 :class="{'multiselect_filled': elem.value}"
                                                 :internal-search="false"
                                                 @select="selectINN"
+                                                :allow-empty="false"
+                                                placeholder="Начните вводить ИНН"
                                                 )
                                                 template(slot="singleLabel", slot-scope="props")
                                                     span.option__desc
@@ -69,16 +70,26 @@
                                                     .option__desc
                                                         span.option__title {{ props.option.data.inn }}
                                                         span.option__small {{ props.option.value }}
-                                            .input__label(style="z-index: 0") {{ elem.title }}
+
+                                                template(slot="noResult", slot-scope="props")
+                                                  span.option__desc
+                                                      span.option__title ИНН не найден
+
+                                                template(slot="noOptions", slot-scope="props")
+                                                  span.option__desc
+                                                      span.option__title Список пустой
+
+                                            .input__label(style="z-index: 0") {{ elem.title }}{{elem.required?'*':''}}
                                     
                                     label.test(v-if="elem.type === 'file'" class="auth__field-file")
-                                        span.test Прикрепить "{{ elem.title }}"
+                                        span.test Прикрепить "{{ elem.title }}"{{elem.required?'*':''}}
                                         input.test(:type="elem.type" @change="loadFile" :data-prop="elem.id")
-                                    br    
+                                    <br>    
                                     ol.files(v-if="elem.type === 'file'")
                                         li(v-for="(file, fIdx) in elem.value" :key="fIdx") 
                                             span {{file.title}} 
                                             span(@click="elem.value.splice(fIdx, 1)" style="cursor: pointer;") (удалить)
+                            .auth__fieldset-title Поля со звездой (*) обязательны для заполнения
                             .auth__field-item
                                 label.checklist__item
                                     input(v-model="privacy" type="checkbox")
@@ -157,7 +168,7 @@ export default {
       return this.$store.getters.cuser.isLoggedIn;
     },
     isMobile() {
-      return screen.width < 760;
+      return this.$screen.width < 760;
     },
     currentData() {
       return this.regData[this.activeClientTab];
@@ -258,13 +269,48 @@ export default {
 
       // }
     },
+    validateRegForm: function() {
+      const formErrors = [];
+      const chosenRegDataset = this.regData[this.activeClientTab].sections;
+      chosenRegDataset.forEach((section) => {
+        section.fields.forEach((field) => {
+          if(field.required ){
+            const containsValue = Object.hasOwn(this.formatedForm, field.model) && this.formatedForm[field.model];
+            
+            if(!containsValue){
+              formErrors.push(`Поле ${field.title} должно быть заполнено`)
+            }else{
+              const value = this.formatedForm[field.model];
+              if(field.model.toLowerCase().includes('phone')){
+                if(value.length < 18){
+                  formErrors.push(`Введите телефон полностью`)
+                }
+              }
+              if(field.model.toLowerCase().includes('email')){
+                const email_re = /^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/;
+                if(!(email_re.test(value))){
+                  formErrors.push(`Введите верный email`)
+                }
+              }
+            }
+          }
+        });
+      });
+      return formErrors;
+    },
     sendForm: async function () {
-      this.errors = [];
-      this.loading = true;
+      this.errors = this.validateRegForm();
+      console.table(this.formatedForm);
+
       if (this.privacy === false) {
         this.errors.push("Требуется согласие на обработку персональных данных");
+      }
+      
+      if(this.errors.length > 0){
         return;
       }
+      
+      this.loading = true;
       const form = this.formatedForm;
 
       const res = await fetch(
@@ -385,7 +431,11 @@ export default {
       // }
     },
   },
-  watch: {},
+  watch: {
+    activeClientTab(value) {
+      this.errors = [];
+    }
+  },
 };
 </script>
 

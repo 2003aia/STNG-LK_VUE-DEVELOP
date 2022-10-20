@@ -2,10 +2,10 @@
 .layout.profile
     .layout__main(v-if="passChange===false")
         .layout__title Мои данные
-        br    
+        <br>    
         .text Имя котрагента  
             span {{name}}
-        br    
+        <br>    
         .text email 
             span {{profile.email}}
         div

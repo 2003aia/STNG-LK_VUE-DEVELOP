@@ -104,13 +104,6 @@ const router = new VueRouter({
                     component: AgreementsList
                 },
                 {
-                    name: "agreements-addresses",
-                    path: ":id",
-                    // path: "/test",
-                    component: AgreementsAddresses
-                },
-
-                {
                     name: "agreements-address",
                     path: ":id",
                     // path: '/test',
