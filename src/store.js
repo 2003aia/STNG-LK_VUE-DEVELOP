@@ -422,8 +422,8 @@ export default new Vuex.Store({
       if (Vue.cookie.get("token")) {
         console.log("Получаем токен из куки...");
         
-        if (router.currentRoute.path !== '/registr' && router.currentRoute.path !== '/agreements/') {
-          //router.push('/agreements/')
+        if (router.currentRoute.path === '/' && router.currentRoute.path !== '/agreements/') {
+          router.push('/agreements/')
         }
         ctx.commit("setUser", Vue.cookie.get("token"));
       } else {
