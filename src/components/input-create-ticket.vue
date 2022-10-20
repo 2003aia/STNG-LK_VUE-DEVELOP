@@ -10,7 +10,7 @@ import 'vue2-datepicker/locale/ru';
 
 export default {
   name: 'Input',
-  props: ['label', 'type', 'value', 'options', 'optionLabel', 'customLabel', 'format', 'required'],
+  props: ['label', 'type', 'value', 'options', 'optionLabel', 'customLabel', 'format', 'required', 'allowEmpty'],
   data() {
     return {
       localValue: this.value,
@@ -77,6 +77,7 @@ export default {
       selectedLabel=""
       deselectLabel=""
       :showNoResults="false"
+      :allow-empty="allowEmpty"
       )
     
     date-picker(

@@ -36,7 +36,7 @@
             placeholder="Введите показания"
           )
   .notice(v-if="notices.length > 0" )
-    p(v-for="notice in notices") {{ notice.message }}
+    p(v-for="notice in notices" :class="{notice__error: notice.error}") {{ notice.message }}
   .bills-counter__footer.bills-counter__footer_variant
     .bills-counter__description В случае неправильного ввода показаний, следует обратиться в отдел по работе с предприятиями УГРС по телефонам: 46-00-62, 46-00-73, 46-00-20, 46-00-25
     .bills-counter__submit
@@ -75,12 +75,12 @@ export default {
       let sendRecord = [];
       this.notices = [];
       for (const record of this.records) {
-        let old_indication_str = record.old_indication + "";
 
         if (record.value !== "") {
           if (+record.value < +record.old_indication)
             this.notices.push({ error: true, message: `${record.name}: Показания по счетчику меньше предыдущих показаний` });
-          if (record.value.length - old_indication_str.length > 2)
+            console.log(parseInt(record.value).toString().length, parseInt(record.old_indication).toString().length, parseInt(record.value).toString().length - parseInt(record.old_indication).toString().length)
+          if (parseInt(record.value).toString().length - parseInt(record.old_indication).toString().length >= 2)
             this.notices.push({ error: true, message: `${record.name}: Cлишком большая разница между текущими и предыдущими показаниями` });
 
           sendRecord.push(record);
@@ -184,4 +184,7 @@ export default {
   p
     margin: 0
     font-size: 14px
+
+  &__error
+    color: #e10000
 </style>

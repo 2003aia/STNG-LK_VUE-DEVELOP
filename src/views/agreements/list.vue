@@ -34,9 +34,9 @@
                 template(v-slot:footer)
                     //- Button(variety="white" :to="`/bills/history/`") Адреса
 
-                    Button(v-if="agreement.objects.length !== 0" variety="white" :to="`/agreements/${agreement.id}/allcounters`") Внести показания
+                    Button(v-if="agreement.objects.length !== 0" variety="primary-light" :to="`/agreements/${agreement.id}/allcounters`") Внести показания
                     //- Button(variety="primary-light" :to="`/agreements/${agreement.id}/${agreement.id}/bills`" v-if="!isMobile") История
-                    Button(variety="white" :to="`/agreements/${agreement.id}/bills`") Счета
+                    Button(variety="primary-light" :to="`/agreements/${agreement.id}/bills`") Счета
                     
                     //- Button(variety="primary-light-outline" v-if="!isMobile") Удалить
             //- Button(variety="add-list") Добавить договор

@@ -102,6 +102,7 @@ export default {
         label="Выберите категорию обращения"
         optionLabel="label"
         :value="selected_category"
+        :allow-empty="false"
         @onselect="select_category"
         style="z-index:1")
 

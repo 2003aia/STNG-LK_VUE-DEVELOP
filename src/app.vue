@@ -75,7 +75,7 @@ export default {
             return this.$store.state.user.registr
         },
         isMobile () {
-            return screen.width < 760
+            return this.$screen.width < 760
         },
         isLoggedIn () {
             return this.$store.getters.cuser.isLoggedIn
@@ -224,7 +224,7 @@ export default {
         justify-content: space-between
 
         @media screen and (max-width: $mobile-width)
-            width: 100vw
+            width: 100%
 
     &__backward
         display: flex

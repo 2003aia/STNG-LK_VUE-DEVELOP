@@ -24,7 +24,7 @@
                     //- .bills-pay__pay
                         Button(size="small") Оплатить
                     .bills-pay__print
-                        a(:href="getPDFFile" @click="getPDFId(bill.id)" :download="bill.id")
+                        a(:href="`#/${bill.number}.pdf`" @click.prevent="getPDFId(bill.number, bill.id)")
                             Button(size="small" variety="secondary") Распечатать счет
 
     .mobile-table.mobile-table_variant(v-if="isMobile")
@@ -115,9 +115,21 @@ export default {
                 (this.fines.toPay === '' ? 0 : +this.fines.toPay) + 
                 (this.connect.toPay === '' ? 0 : +this.connect.toPay)
         },
-        getPDFId (id) {
+        getPDFId (name, id) {
             // //console.log(id, 'input pdf')
-            this.$store.dispatch('getPDFFile', id).then(()=>{
+            this.$store.dispatch('getPDFFile', id).then((response)=>{
+                if(response){
+                    const base64String = response.data
+                        .replace("data:", "")
+                        .replace(/^.+,/, "");
+                    const buf = Buffer.from(base64String, 'base64');
+                    let blob = new Blob([new Uint8Array(buf).buffer]);
+    
+                    let link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = `${name}.pdf`;
+                    link.click();
+                }
             })
         }
        
@@ -129,9 +141,9 @@ export default {
         getBills () {
             return this.$store.getters.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
         },
-        getPDFFile () {
-            return this.$store.getters.getPDFFile
-        }
+        // getPDFFile () {
+        //     return this.$store.getters.getPDFFile
+        // }
     },
     watch: {
         bills() {

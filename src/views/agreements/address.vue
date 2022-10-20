@@ -10,7 +10,7 @@
     )
 
     //- Back(:goto="`/agreements/${$route.params.id}`" v-if="!isMobile")
-    .layout__title Оплата [{{ getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name }} {{ '|' + object[0]?.object ? object[0]?.object : '' + ' ' + $route.params?.address ? $route.params?.address : '' | capitalize }}]
+    .layout__title Оплата [{{ getCurrent.name }} {{ '|' + object[0]?.object ? object[0]?.object : '' + ' ' + $route.params?.address ? $route.params?.address : '' | capitalize }}]
     //- .layout__title Оплата {{getCurrent.number ? `Договор №${getCurrent.number}` : getCurrent.name}} 
 
     div(:style="{ margin: isMobile ? '0 -16px' : '0 -24px' }")

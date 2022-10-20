@@ -82,6 +82,7 @@ export default new Vuex.Store({
       // state.user.isLoggedIn = false;
       // state.user.token = null;
       localStorage.clear();
+      window.location.href = '/#';
       window.location.reload();
     },
     setCurrentAgreement: (state, object = {}) => {
@@ -422,7 +423,7 @@ export default new Vuex.Store({
         console.log("Получаем токен из куки...");
         
         if (router.currentRoute.path !== '/registr' && router.currentRoute.path !== '/agreements/') {
-          router.push('/agreements/')
+          //router.push('/agreements/')
         }
         ctx.commit("setUser", Vue.cookie.get("token"));
       } else {
@@ -439,11 +440,7 @@ export default new Vuex.Store({
      
         console.log("Токен отсутствует в куки, требуется авторизация...");
       } 
-      if (router.currentRoute.path === '/registr') {
-        ctx.commit("setRegistr", 'reg');
-        console.log('registr')
-        
-      }
+
     },
     getObjects: async ({ commit, state }, agreementId) => {
       // commit("setLoading", true);
@@ -552,13 +549,14 @@ export default new Vuex.Store({
         const json = await res.json();
 
         if (json.error === false) {
-          ctx.commit("setPDFFile", json.data);
+          //ctx.commit("setPDFFile", json.data);
 
           console.log("Получен pdf file");
         }
         return json;
       }
       console.log("Ошибка отправки запроса: -> getPDFFile");
+      return null
     },
 
     sendIndication: async (ctx, data) => {
@@ -611,7 +609,8 @@ export default new Vuex.Store({
         agreement.objects.forEach((object, indexObj)=>{
 
           mappedData[indexAgr].objects[indexObj].counters =  Object.keys(object.counters).map((key)=>{
-            return {id: key, value: object.counters[key]};
+            const parsedNumber = parseFloat(object.counters[key]).toFixed(2);
+            return {id: key, value: parsedNumber};
           });
         });
       });

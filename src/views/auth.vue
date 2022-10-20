@@ -262,7 +262,7 @@ export default {
       fetch(url, options)
         .then((res) => res.json())
         .then((data) => {
-          console.log("data.suggestions", data.suggestions);
+          //console.log("data.suggestions", data.suggestions);
           this.dadataValues = data.suggestions;
           this.isLoading = false;
         });
@@ -274,11 +274,21 @@ export default {
       const chosenRegDataset = this.regData[this.activeClientTab].sections;
       chosenRegDataset.forEach((section) => {
         section.fields.forEach((field) => {
-          if(field.required ){
+          if(field.required){
             const containsValue = Object.hasOwn(this.formatedForm, field.model) && this.formatedForm[field.model];
             
+            //console.table(this.formatedForm)
             if(!containsValue){
-              formErrors.push(`Поле ${field.title} должно быть заполнено`)
+
+              if(field.model.toLowerCase().includes('file')){
+                const file = this.formatedForm.ATTACHMENTS.filter((file) => file.MODEL === field.model);
+
+                if(file.length === 0){
+                  formErrors.push(`Поле ${field.title} должно быть заполнено`);
+                }
+              } else {
+                formErrors.push(`Поле ${field.title} должно быть заполнено`);
+              }        
             }else{
               const value = this.formatedForm[field.model];
               if(field.model.toLowerCase().includes('phone')){
@@ -300,7 +310,7 @@ export default {
     },
     sendForm: async function () {
       this.errors = this.validateRegForm();
-      console.table(this.formatedForm);
+      //console.table(this.formatedForm);
 
       if (this.privacy === false) {
         this.errors.push("Требуется согласие на обработку персональных данных");
@@ -434,6 +444,9 @@ export default {
   watch: {
     activeClientTab(value) {
       this.errors = [];
+    },
+    page(value){
+      this.errors = [];
     }
   },
 };
@@ -448,7 +461,8 @@ export default {
     margin: 0
     // background: red
     max-width: 50%
-    // display: flex
+    display: flex
+    align-items: center
     // flex-direction:  row
     @media screen and (max-width: $mobile-width)
       max-width: 100%
