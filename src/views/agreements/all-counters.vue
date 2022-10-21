@@ -35,8 +35,8 @@
             v-model="item.value",
             placeholder="Введите показания"
           )
-  .notice(v-if="notices.length > 0" )
-    p(v-for="notice in notices" :class="{notice__error: notice.error}") {{ notice.message }}
+  .notice(v-if="getSendNotices.length > 0" )
+    p(v-for="notice in getSendNotices" :class="{notice__error: notice.error}") {{ notice.message }}
   .bills-counter__footer.bills-counter__footer_variant
     .bills-counter__description В случае неправильного ввода показаний, следует обратиться в отдел по работе с предприятиями УГРС по телефонам: 46-00-62, 46-00-73, 46-00-20, 46-00-25
     .bills-counter__submit
@@ -54,7 +54,6 @@ export default {
   data() {
     return {
       records: [],
-      notices: [],
       objectId: "",
     };
   },
@@ -73,37 +72,41 @@ export default {
     },
     sendIndication() {
       let sendRecord = [];
-      this.notices = [];
+      let notices = [];
       for (const record of this.records) {
 
         if (record.value !== "") {
           if (+record.value < +record.old_indication)
-            this.notices.push({ error: true, message: `${record.name}: Показания по счетчику меньше предыдущих показаний` });
+            notices.push({ error: true, message: `${record.name}: Показания по счетчику меньше предыдущих показаний` });
             console.log(parseInt(record.value).toString().length, parseInt(record.old_indication).toString().length, parseInt(record.value).toString().length - parseInt(record.old_indication).toString().length)
           if (parseInt(record.value).toString().length - parseInt(record.old_indication).toString().length >= 2)
-            this.notices.push({ error: true, message: `${record.name}: Cлишком большая разница между текущими и предыдущими показаниями` });
+            notices.push({ error: true, message: `${record.name}: Cлишком большая разница между текущими и предыдущими показаниями` });
 
           sendRecord.push(record);
         }
       }
 
-      if (this.notices.length > 0)
+      if (notices.length > 0){
+        this.$store.commit("addAgreementNotice", {agrId: this.$route.params.id, notices: notices});
         return;
+      }
 
-      this.notices.push({ error: false, message: "Показания отправлены, подождите ответа" });
+      //this.notices.push({ error: false, message: "Показания отправлены, подождите ответа" });
+      this.$store.commit("setModal", {type: 'info', info: 'Показания отправлены, подождите ответа'});
 
       this.$store.dispatch("sendIndication", sendRecord).then((res) => {
         if(!res || res.length === 0){
           return;
         }
         if(res[0].message == "Прием показаний производится с 25 числа текущего месяца по 1 число следующего за отчетным. Передача показаний приборов учета в другие дни производится непосредственно куратору."){
-          this.notices = [{error: true, message: "Прием показаний производится с 25 числа текущего месяца по 1 число следующего за отчетным. Передача показаний приборов учета в другие дни производится непосредственно куратору."}];
+          notices = [{error: true, message: "Прием показаний производится с 25 числа текущего месяца по 1 число следующего за отчетным. Передача показаний приборов учета в другие дни производится непосредственно куратору."}];
           this.records.forEach((o, i) => this.records[i].value = "")
+          this.$store.commit("addAgreementNotice", {agrId: this.$route.params.id, notices: notices});
           return;
         }
 
-        this.notices = [];
-        this.notices = res.map(({ error, message }, index) => {
+        notices = [];
+        notices = res.map(({ error, message }, index) => {
           const newMessage = sendRecord[index].name + ": " + message;
 
           if (error === false) {
@@ -119,7 +122,8 @@ export default {
           return { error: error, message: newMessage };
         });
 
-        console.log("errors", this.notices);
+        console.log('setting notices', notices);
+        this.$store.commit("addAgreementNotice", {agrId: this.$route.params.id, notices: notices});
       });
     },
   },
@@ -129,6 +133,9 @@ export default {
     },
     getCounters() {
       return this.$store.getters.getCurrentAgreement;
+    },
+    getSendNotices() {
+      return this.$store.getters.agreementNotices[this.$route.params.id] ?? [];
     },
     getBills() {
       return this.getCounters.objects;
@@ -170,6 +177,8 @@ export default {
         }
       });
     }
+
+    console.log('get info from store',this.getSendNotices)
   },
 };
 </script>

@@ -4,7 +4,7 @@
         .layout__title Мои данные
         <br>    
         .text Имя котрагента  
-            span {{name}}
+            span {{profile.name}}
         <br>    
         .text email 
             span {{profile.email}}
@@ -24,9 +24,11 @@
 
             Row(:style="{marginTop:isMobile?'8px':'1.5rem'}" gutter="1.5" unit="rem")
                 Col
-                    Button(full, :method="saveProfile") Сохранить изменения 
+                    a.click-button(@click.prevent="saveProfile")
+                        Button(full) Сохранить изменения 
                 Col
-                    Button(full, variety="secondary", :method="()=>passChange = !passChange") Изменить пароль
+                    a.click-button(@click.prevent="passChange = !passChange")
+                        Button(full, variety="secondary") Изменить пароль
     .layout__main(v-if="passChange===true")
         .layout__title Мои данные
         div
@@ -35,9 +37,15 @@
                     Input(label="Новый пароль" v-model="password")
                 Col
                     Input(label="Повторите новый пароль" v-model="passwordConfirm")
+            Row(:style="{marginTop:isMobile?'10px':'1.125rem'}" gutter="1.5" unit="rem" v-if="error")
+                .error-text {{ error }}
             Row(:style="{marginTop:isMobile?'8px':'1.5rem'}" gutter="1.5" unit="rem")
                 Col
-                    Button(full, :method="savePassword") Сохранить изменения
+                    a.click-button(@click.prevent="savePassword")
+                        Button(full) Сохранить изменения
+                Col
+                    a.click-button(@click.prevent="passChange = !passChange")
+                        Button(full, variety="secondary") Изменить данные
                               
     LayoutSidebar
         router-link(to="#") Все обращения
@@ -77,10 +85,7 @@ export default {
   },
   computed: {
     isMobile() {
-      return screen.width < 760;
-    },
-    name() {
-      return Vue.cookie.get("contrName");
+      return this.$screen.width < 760;
     },
   },
   mounted() {
@@ -101,15 +106,18 @@ export default {
         otchestvo: this.profile.otchestvo,
       };
       const cachedData = JSON.parse(Vue.cookie.get("profileData"));
-      this.$store.dispatch("saveProfile", userObject).then((res) => {
 
-        Vue.cookie.set(
-          "profileData",
-          JSON.stringify({ ...cachedData, userObject }),
-          {
-            expires: "2h",
-          }
-        );
+      this.$store.dispatch("saveProfile", userObject).then((res) => {
+        if(res.error === false){
+          this.$store.commit("setModal", {type: 'info', info: 'Данные успешно сохранены'});
+          Vue.cookie.set(
+            "profileData",
+            JSON.stringify({ ...cachedData, ...userObject }),
+            {
+              expires: "2h",
+            }
+          );
+        }
       });
     },
     async savePassword() {
@@ -118,9 +126,17 @@ export default {
         token: token,
         password: this.password,
       };
+      if(this.password.trim().length < 6){
+        this.error = "Пароль не может быть меньше 6 символов";
+        return;
+      }
+
       if (this.password === this.passwordConfirm) {
         this.$store.dispatch("savePassword", userObject).then((res) => {
           console.log(res, "save password test");
+          if(res.error === false){
+            this.$store.commit("setModal", {type: 'info', info: 'Пароль успешно изменен'});
+          }
         });
       } else {
         this.error = "Пароли не совпадают";
@@ -152,4 +168,10 @@ export default {
     // line-height: 1.5rem
     span
         color: #000
+.click-button
+    width: 100%
+
+.error-text
+    font-size: 14px
+    color: #e10000
 </style>

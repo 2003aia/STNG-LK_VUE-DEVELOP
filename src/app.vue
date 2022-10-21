@@ -4,6 +4,7 @@
         Auth
     .app(v-else)
         .app__overlay(v-if="$store.state.overlay" @click="$store.dispatch('hideOverlay')")
+        info-modal(v-if="isModal")
         .modal.modal_sign(v-if="$store.state.overlay")
             .modal__header
                 Button(size="small") Скачать договор для ознакомления
@@ -43,6 +44,7 @@
                 .app__content
                     //- My
                     router-view
+        
 </template>
 
 <script>
@@ -52,6 +54,7 @@ import {
     Icon,
     ButtonClick
 } from '@/components'
+import InfoModal from '@/components/info-modal'
 
 import Auth from '@/views/auth'
 import My from '@/views/services/my'
@@ -63,7 +66,7 @@ export default {
         }
     },
     components: {
-        ButtonClick, Menu, Icon, Button, Auth, My
+        ButtonClick, Menu, Icon, Button, Auth, My, InfoModal
     },
     watch: {
         $route (to, from) {
@@ -79,6 +82,9 @@ export default {
         },
         isLoggedIn () {
             return this.$store.getters.cuser.isLoggedIn
+        },
+        isModal() {
+            return this.$store.getters.modal.type
         }
     },
     mounted() {

@@ -28,6 +28,7 @@ export default new Vuex.Store({
     },
     bills: {},
     agreements: [],
+    agreementsNotices: {},
     profile: null,
     history: [],
     services: [],
@@ -39,8 +40,10 @@ export default new Vuex.Store({
     currentObject: {},
     is_loading: true,
     passwordRecoverySent: null,
-    profileSaved: null,
-    passwordSaved: null,
+    modal: {
+      type: null,
+      info: null,
+    },
   },
   mutations: {
     setBills(state, updateBills) {
@@ -55,9 +58,9 @@ export default new Vuex.Store({
     getHistory: (state) => {
       state.history = dataHistory;
     },
-    getServices: (state) => {
-      state.services = dataServices;
-    },
+    // getServices: (state) => {
+    //   state.services = dataServices;
+    // },
     getServicesRequests: (state, data) => {
       state.servicesRequests = data;
     },
@@ -100,12 +103,17 @@ export default new Vuex.Store({
     forgotUser: (state, message) => {
       state.passwordRecoverySent = message;
     },
-    profileSaved: (state, message) => {
-      state.profileSaved = message;
+    setModalType: (state, type) => {
+      state.modal.type = type;
     },
-    passwordSaved: (state, message) => {
-      state.passwordSaved = message;
+    setModal: (state, modal) => {
+      state.modal = modal;
     },
+    addAgreementNotice: (state, {agrId, notices}) => {
+      // if()
+      Vue.set(state.agreementsNotices, agrId, notices);
+      //state.agreementsNotices[agrId] = notices;
+    }
   },
   actions: {
     getBills: async ({ commit, dispatch, state }, data) => {
@@ -236,9 +244,9 @@ export default new Vuex.Store({
     getHistory: (ctx) => {
       ctx.commit("getHistory");
     },
-    getServices: (ctx) => {
-      ctx.commit("getServices");
-    },
+    // getServices: (ctx) => {
+    //   ctx.commit("getServices");
+    // },
     getServicesRequests: async ({ commit, state }, data) => {
       console.log("Получаем токен из сервера...", data);
       let res;
@@ -386,11 +394,7 @@ export default new Vuex.Store({
       if (res.ok) {
         const json = await res.json();
         console.log(json, "profile saved store test");
-        if (json.error === false) {
-          ctx.commit("profileSaved", json.message);
-        } else {
-          return json;
-        }
+        return json;
       }
     },
     savePassword: async (ctx, userObject) => {
@@ -410,11 +414,7 @@ export default new Vuex.Store({
       if (res.ok) {
         const json = await res.json();
         console.log(json, "password saved store test");
-        if (json.error === false) {
-          ctx.commit("passwordSaved", json.message);
-        } else {
-          return json;
-        }
+        return json;
       }
     },
     init: async (ctx) => {
@@ -661,10 +661,10 @@ export default new Vuex.Store({
 
       if (res.ok) {
         const json = await res.json();
-        console.log({json});
+        // console.log({json});
         
         if (json.some(elem => elem.error === false)) {
-          console.log("Показания отправлены на сервер.");
+          // console.log("Показания отправлены на сервер.");
           // ctx.commit("setLoading", false);
           await ctx.dispatch("getAgreements");
 
@@ -684,6 +684,7 @@ export default new Vuex.Store({
       
       return json;
     },
+
   },
   getters: {
     cuser: (state) => state.user,
@@ -696,5 +697,7 @@ export default new Vuex.Store({
     getPDFFile: (state) => state.pdfFile,
     getCurrentObject: (state) => state.currentObject,
     is_loading: (state) => state.is_loading,
+    modal: (state) => state.modal,
+    agreementNotices: (state) => state.agreementsNotices,
   },
 });

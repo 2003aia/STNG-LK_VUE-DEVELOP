@@ -13,7 +13,7 @@
                 v-for="(agreement, agreementIndex) in getBills"
                 angle
                 :title="agreement.name"
-                :contrName="name"
+                :contrName="profileData.name"
                 :inn="profileData.inn"
                 :debt="agreement.debt",
                 :index="agreementIndex"
@@ -122,9 +122,6 @@ export default {
         },
         profileData() {
             return JSON.parse(Vue.cookie.get('profileData'))
-        },
-        name() {
-            return Vue.cookie.get('contrName')
         },
         getBills () {
             try {

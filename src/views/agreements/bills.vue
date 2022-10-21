@@ -139,7 +139,7 @@ export default {
             return this.$screen.width < 760;
         },
         getBills () {
-            return this.$store.getters.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
+            return this.$store.getters.getBills ? this.$store.getters.getBills.filter((el)=>el.agreement.id === this.$route.params.id) : null
         },
         // getPDFFile () {
         //     return this.$store.getters.getPDFFile
@@ -152,7 +152,7 @@ export default {
     },
     mounted(){
         
-        this.$data.bills = this.getBills.filter((el)=>el.agreement.id === this.$route.params.id)
+        this.$data.bills = this.getBills ? this.getBills.filter((el)=>el.agreement.id === this.$route.params.id) : null
         this.$store.commit("setPDFFile", null);
 
         console.log("bills", this.$data.bills)

@@ -82,7 +82,7 @@ export default {
   },
   computed: {
     isMobile() {
-      return screen.width < 760;
+      return this.$screen.width < 760;
     },
   },
   watch: {
@@ -115,7 +115,7 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch("getServices");
+    //this.$store.dispatch("getServices");
     this.list = this.$store.state.services;
   },
   components: {

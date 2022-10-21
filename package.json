@@ -26,6 +26,7 @@
     "@vue/cli-plugin-vuex": "^4.1.0",
     "@vue/cli-service": "^4.1.0",
     "axios": "^0.21.1",
+    "babel-plugin-transform-remove-console": "^6.9.4",
     "moment": "^2.24.0",
     "normalize.css": "^8.0.1",
     "pug": "^3.0.2",
