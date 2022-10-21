@@ -7,7 +7,7 @@ export default {
     }
   },
   computed:{
-    modal() { return this.$store.getters.modal }
+    modal() { return this.$store.getters.modal; }
   },
 
   methods: {

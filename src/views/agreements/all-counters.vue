@@ -76,11 +76,15 @@ export default {
       for (const record of this.records) {
 
         if (record.value !== "") {
-          if (+record.value < +record.old_indication)
+          if (+record.value < +record.old_indication){
             notices.push({ error: true, message: `${record.name}: Показания по счетчику меньше предыдущих показаний` });
-            console.log(parseInt(record.value).toString().length, parseInt(record.old_indication).toString().length, parseInt(record.value).toString().length - parseInt(record.old_indication).toString().length)
-          if (parseInt(record.value).toString().length - parseInt(record.old_indication).toString().length >= 2)
+          }
+          
+          const newLength = parseInt(record.value).toString().length;
+          const oldLength = parseInt(record.old_indication).toString().length;
+          if (newLength - oldLength >= 2){
             notices.push({ error: true, message: `${record.name}: Cлишком большая разница между текущими и предыдущими показаниями` });
+          }
 
           sendRecord.push(record);
         }
@@ -93,6 +97,7 @@ export default {
 
       //this.notices.push({ error: false, message: "Показания отправлены, подождите ответа" });
       this.$store.commit("setModal", {type: 'info', info: 'Показания отправлены, подождите ответа'});
+      this.$store.commit("addAgreementNotice", {agrId: this.$route.params.id, notices: null});
 
       this.$store.dispatch("sendIndication", sendRecord).then((res) => {
         if(!res || res.length === 0){
@@ -124,6 +129,7 @@ export default {
 
         console.log('setting notices', notices);
         this.$store.commit("addAgreementNotice", {agrId: this.$route.params.id, notices: notices});
+        this.$store.commit('setModalType', null); 
       });
     },
   },

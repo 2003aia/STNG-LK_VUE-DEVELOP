@@ -110,9 +110,7 @@ export default new Vuex.Store({
       state.modal = modal;
     },
     addAgreementNotice: (state, {agrId, notices}) => {
-      // if()
       Vue.set(state.agreementsNotices, agrId, notices);
-      //state.agreementsNotices[agrId] = notices;
     }
   },
   actions: {
@@ -338,9 +336,6 @@ export default new Vuex.Store({
             Vue.cookie.set("token", json.data.token, {
               expires: "2h",
             });
-            Vue.cookie.set("contrName", json.data.name, {
-              expires: "2h",
-            });
             Vue.cookie.set("profileData", JSON.stringify({...json.data, login: userObject.login}), {
               expires: "2h",
             });
@@ -434,7 +429,6 @@ export default new Vuex.Store({
           ctx.commit("setUser", token);
           Vue.cookie.set("token", token);
           Vue.cookie.set('profileData', JSON.stringify(profileData))
-          Vue.cookie.set('contrName', profileData.name)
           router.push('/agreements/')
         }
      
@@ -517,9 +511,6 @@ export default new Vuex.Store({
       if (Vue.cookie.get("token")) {
         Vue.cookie.delete("token");
       }
-      if (Vue.cookie.get("contrName")) {
-        Vue.cookie.delete("contrName");
-      }
       if (Vue.cookie.get("profileData")) {
         Vue.cookie.delete("profileData");
       }
@@ -560,7 +551,7 @@ export default new Vuex.Store({
     },
 
     sendIndication: async (ctx, data) => {
-      // ctx.commit("setLoading", true);
+      ctx.commit("setLoading", true);
 
       // const obj = {
       //   counters: [],
@@ -609,8 +600,8 @@ export default new Vuex.Store({
         agreement.objects.forEach((object, indexObj)=>{
 
           mappedData[indexAgr].objects[indexObj].counters =  Object.keys(object.counters).map((key)=>{
-            const parsedNumber = parseFloat(object.counters[key]).toFixed(2);
-            return {id: key, value: parsedNumber};
+            // const parsedNumber = parseFloat(object.counters[key]).toFixed(2);
+            return {id: key, value: object.counters[key]};
           });
         });
       });
@@ -665,14 +656,14 @@ export default new Vuex.Store({
         
         if (json.some(elem => elem.error === false)) {
           // console.log("Показания отправлены на сервер.");
-          // ctx.commit("setLoading", false);
+          ctx.commit("setLoading", false);
           await ctx.dispatch("getAgreements");
 
           //   await ctx.dispatch("getObjects", router.currentRoute.params.id);
           return json;
         }
 
-        // ctx.commit("setLoading", false);
+        ctx.commit("setLoading", false);
         return json;
       }
       console.log("Ошибка отправки запроса: -> sendIndication");
