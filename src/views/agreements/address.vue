@@ -19,7 +19,7 @@
           router-link.layout__tabs-item(
             v-if="!$route.params.id.includes('/bills')",
             :to="`/agreements/${$route.params.id}/allcounters`",
-            :class="{ 'layout__tabs-item_active': $route.name === 'agreements-list' }"
+            :class="{ 'layout__tabs-item_active': $route.name === 'agreements-address-counters' }"
           ) Показания счетчиков
           //router-link.layout__tabs-item(:to="`/agreements/${$route.params.id}/${$route.params.address}`" :class="{'layout__tabs-item_active': $route.name === 'agreements-address-pay'}") Оплата
           router-link.layout__tabs-item(

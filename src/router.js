@@ -116,7 +116,7 @@ const router = new VueRouter({
                         //     component: AgreementsAddressPay
                         // },
                         {
-                            name: "agreements-list",
+                            name: "agreements-address-counters",
                             path: "allcounters",
                             component: AgreementsAllCounters
                         },
