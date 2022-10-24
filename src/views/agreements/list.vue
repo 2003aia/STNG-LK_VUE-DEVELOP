@@ -74,6 +74,10 @@
         //- .error(v-else)
         //-     h1 {{ error }}            
     LayoutSidebar
+        .info-test 
+            p Уважаемые клиенты! Личный кабинет для Юридических лиц работает в тестовом режиме.<br>
+            p Все замечания и предложения можно направить перейдя в раздел "Мои обращения".
+
         router-link(to="/support/") Все обращения
         SidebarSupport(:items="tickets")
 </template>
@@ -183,4 +187,8 @@ export default {
     .layout__main
         flex-grow: 1
 
+.info-test
+    font-size: 14px
+    margin: 0 0 1.5rem 1.5rem
+    color: var(--color-font)
 </style>
