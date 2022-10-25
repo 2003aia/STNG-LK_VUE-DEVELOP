@@ -41,7 +41,7 @@
                         div(v-if="!successText")
                             .auth__fieldset(v-for="(section, idx) in currentData.sections" :key="idx")
                                 .auth__fieldset-title {{section.title}}
-                                .auth__fieldset-item(v-for="(elem, idx) in section.fields" :key="idx")
+                                .auth__fieldset-item(v-for="(elem, fieldIdx) in section.fields" :key="fieldIdx")
                                     
                                     Input(:label="`${elem.title}${elem.required?'*':''}`" v-model="elem.value" :type="elem.type" v-if="elem.type !== 'file' && elem.model !== 'PROP_INN'")
                                     
@@ -83,7 +83,7 @@
                                     
                                     label.test(v-if="elem.type === 'file'" class="auth__field-file")
                                         span.test Прикрепить "{{ elem.title }}"{{elem.required?'*':''}}
-                                        input.test(:type="elem.type" @change="loadFile" :data-prop="elem.id")
+                                        input.test(:type="elem.type" @change="loadFile" :data-prop="elem.id" :key="elem.id")
                                     <br>    
                                     ol.files(v-if="elem.type === 'file'")
                                         li(v-for="(file, fIdx) in elem.value" :key="fIdx") 
@@ -311,7 +311,8 @@ export default {
     },
     sendForm: async function () {
       this.errors = this.validateRegForm();
-      //console.table(this.formatedForm);
+      console.table(this.formatedForm.ATTACHMENTS);
+      console.table(this.formatedForm);
 
       if (this.privacy === false) {
         this.errors.push("Требуется согласие на обработку персональных данных");
@@ -350,19 +351,24 @@ export default {
       if(!file) { return; }
       
       const reader = new FileReader();
+
+      let isSuccess = true;
       
       const kbSize = parseFloat(file.size / 1024).toFixed(2);
       if(kbSize >= 5120){
         this.errors.push("Размер загружаемого файла не должен превышать 5 Мб");
-        return;
+        isSuccess = false;
       }
       const fileTypes = ['jpg', 'jpeg', 'png', 'zip', 'pdf'];
 
       const extension = file.name.split('.').pop().toLowerCase(); 
-      const isSuccess = fileTypes.indexOf(extension) > -1;
 
-      if(!isSuccess){
+      if(fileTypes.indexOf(extension) <= -1){
         this.errors.push("Возможные типы файлов для загрузки: *.jpg, *.jpeg, *.png, *.zip, *.pdf");
+        isSuccess = false;
+      }
+
+      if (!isSuccess) {
         return;
       }
 
@@ -387,16 +393,20 @@ export default {
 
         let json = await res.json();
 
-        this.currentData.sections[1].fields[
-          e.target.attributes["data-prop"].value
-        ].value = [
-          ...this.currentData.sections[1].fields[
-            e.target.attributes["data-prop"].value
-          ].value,
-          json,
-        ];
+        const fieldsId = e.target.attributes["data-prop"].value;
+
+        this.currentData.sections[1].fields.forEach((fileField, index) => {
+          if (fileField.id === parseInt(fieldsId)) {
+            this.currentData.sections[1].fields[index].value = [
+              ...this.currentData.sections[1].fields[index].value,
+              json,
+            ];
+          }
+        });
+        console.log(json.FileID)
       };
       reader.readAsDataURL(file);
+      e.target.value = "";
     },
     checkin() {
       this.errors = [];
@@ -480,7 +490,7 @@ export default {
     margin: 0
     // background: red
     max-width: 50%
-    display: flex
+    // display: flex
     align-items: center
     // flex-direction:  row
     @media screen and (max-width: $mobile-width)
