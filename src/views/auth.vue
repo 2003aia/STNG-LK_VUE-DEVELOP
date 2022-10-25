@@ -89,6 +89,7 @@
                                         li(v-for="(file, fIdx) in elem.value" :key="fIdx") 
                                             span {{file.title}} 
                                             span(@click="elem.value.splice(fIdx, 1)" style="cursor: pointer;") (удалить)
+                            .auth__fieldset-title Для загрузки возможны следующие типы файлов: *.jpg, *.jpeg, *.zip, *.pdf, *.png<br>Размер одного файла не должен превышать 5 Мб
                             .auth__fieldset-title Поля со звездой (*) обязательны для заполнения
                             .auth__field-item
                                 label.checklist__item
@@ -344,8 +345,26 @@ export default {
       this.loading = false;
     },
     loadFile: async function (e) {
+      this.errors = [];
       const file = e.target.files[0];
+      if(!file) { return; }
+      
       const reader = new FileReader();
+      
+      const kbSize = parseFloat(file.size / 1024).toFixed(2);
+      if(kbSize >= 5120){
+        this.errors.push("Размер загружаемого файла не должен превышать 5 Мб");
+        return;
+      }
+      const fileTypes = ['jpg', 'jpeg', 'png', 'zip', 'pdf'];
+
+      const extension = file.name.split('.').pop().toLowerCase(); 
+      const isSuccess = fileTypes.indexOf(extension) > -1;
+
+      if(!isSuccess){
+        this.errors.push("Возможные типы файлов для загрузки: *.jpg, *.jpeg, *.png, *.zip, *.pdf");
+        return;
+      }
 
       reader.onloadend = async () => {
         const base64String = reader.result
