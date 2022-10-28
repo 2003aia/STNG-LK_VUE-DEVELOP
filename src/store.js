@@ -414,6 +414,20 @@ export default new Vuex.Store({
     },
     init: async (ctx) => {
       console.log("Инициализация...", router.currentRoute, window.location.href);
+      const profileData = router.currentRoute.query;
+      const token = profileData ? profileData.token : null;
+
+      if(token){
+        ctx.commit("setUser", token);
+        Vue.cookie.set("token", token, {
+          expires: "2h",
+        });
+        Vue.cookie.set("profileData", JSON.stringify(profileData), {
+          expires: "2h",
+        });
+        router.push('/agreements/');
+      }
+
       if (Vue.cookie.get("token")) {
         console.log("Получаем токен из куки...");
         
@@ -421,20 +435,8 @@ export default new Vuex.Store({
           router.push('/agreements/')
         }
         ctx.commit("setUser", Vue.cookie.get("token"));
-      } else {
-        if (router.currentRoute.query.token) {
-          const token = router.currentRoute.query.token;
-          const profileData = router.currentRoute.query
-         
-          ctx.commit("setUser", token);
-          Vue.cookie.set("token", token);
-          Vue.cookie.set('profileData', JSON.stringify(profileData))
-          router.push('/agreements/')
-        }
-     
-        console.log("Токен отсутствует в куки, требуется авторизация...");
-      } 
-
+      }
+      console.log("Токен отсутствует в куки, требуется авторизация...");
     },
     getObjects: async ({ commit, state }, agreementId) => {
       // commit("setLoading", true);

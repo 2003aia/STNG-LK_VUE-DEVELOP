@@ -37,7 +37,7 @@
         Icon(icon="comments" color="font-mute")
         span Мои обращения
 
-    router-link(to="#" v-if="isMobile").menu__item
+    router-link(to="#" v-if="isMobile" @click.native="$store.dispatch('logoutUser')").menu__item
         Icon(icon="logout" color="font-mute")
         span Завершить сеанс
 
@@ -58,7 +58,7 @@ export default {
     },
     computed: {
         isMobile () {
-            return screen.width < 760
+            return this.$screen.width < 760
         }
     }
 }

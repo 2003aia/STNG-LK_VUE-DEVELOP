@@ -32,23 +32,23 @@
           .services-requests__agreement(v-if="item.agreement", @click="sign")
             img(src="@/assets/images/contract.svg")
             span Подписать
-  .mobile-table.mobile-table_variant(v-if="isMobile")
+  .mobile-table.mobile-table_variant(v-else)
     .mobile-table__item(v-for="(item, itemIndex) in list")
       .mobile-table__field
         .mobile-table__key № заявки
         .mobile-table__value
-          span {{ item.number + ' ' + formatDate(item.date) }}
+          span {{ item.number + ' ' + item.date }}
       .mobile-table__field
         .mobile-table__key Услуга
-        .mobile-table__value {{ item.service }}
+        .mobile-table__value {{ item.type }}
       .mobile-table__field
         .mobile-table__key Адрес
         .mobile-table__value
-          span {{ item.address }}
+          span {{ item.email }}
       .mobile-table__field
         .mobile-table__key Статус заявки
         .mobile-table__value
-          span {{ item.status }}
+          span {{ item.statys }}
       .mobile-table__field
         .mobile-table__key Дата приема
         .mobile-table__value
@@ -60,7 +60,7 @@
       .mobile-table__field
         .mobile-table__key № и дата дела
         .mobile-table__value
-          span {{ item.case }}
+          span {{`№${ item.number }  ${item.date}`}}
       .mobile-table__field.mobile-table__field_column
         .mobile-table__key Комментарий
         .mobile-table__value
@@ -106,7 +106,7 @@ export default {
   },
   computed: {
     isMobile() {
-      return screen.width < 760;
+      return this.$screen.width < 760;
     },
     list() {
       return this.$store.state.servicesRequests;

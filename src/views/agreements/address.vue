@@ -65,7 +65,7 @@ export default {
   },
   computed: {
     isMobile() {
-      return screen.width < 760;
+      return this.$screen.width < 760;
     },
     getCurrent() {
       return this.$store.getters.getCurrentAgreement;
@@ -182,7 +182,8 @@ export default {
 
             a
                 display: block
-                margin-top: 16px
+                margin-top: 0
+                line-height: 1rem
 
             .layout__tabs
                 margin-left: 8px

@@ -83,7 +83,15 @@ export default {
       this.$refs.hidden_input.value = null;
     },
 
-    download_file: (file) => window.open(file, "_blank"),
+    download_file: async (name, src) =>{ 
+      const fileLoad = await fetch(src);
+      const stream = await fileLoad.blob();
+
+      let link = document.createElement('a');
+      link.href = window.URL.createObjectURL(stream);
+      link.download = name;
+      link.click();
+    },
 
     select_file(e) {
       const files = e.target.files;
@@ -153,7 +161,7 @@ export default {
               .files-item(v-for="file in message.files" )
                 .files-item-name {{ file.name }}
 
-                .files-item-download(@click="download_file(file.src)")
+                .files-item-download(@click="download_file(file.name, file.src)")
                   img(src="@/assets/images/file-download.svg")
 
             .message-date {{ message.date_create }}
@@ -205,7 +213,7 @@ export default {
     overflow-y: auto
     flex-shrink: 0
 
-    @media screen and (max-width:700px)
+    @media screen and (max-width: $mobile-width)
       width: 100vw
 
       &::-webkit-scrollbar
@@ -233,7 +241,7 @@ export default {
     display: flex
     flex-direction: column
 
-    @media screen and (max-width:700px)
+    @media screen and (max-width: $mobile-width)
       width: 100vw
 
     &-loading
@@ -252,7 +260,7 @@ export default {
       margin: 1.5rem 1.5rem 0
       display: none
 
-      @media screen and (max-width:700px)
+      @media screen and (max-width: $mobile-width)
         display: flex
         gap: 1.5rem
 
@@ -294,7 +302,7 @@ export default {
         line-height: 1.5rem
         align-self: flex-end
 
-        @media screen and (max-width:700px)
+        @media screen and (max-width: $mobile-width)
           width: calc(100% - 40px)
 
         &-text

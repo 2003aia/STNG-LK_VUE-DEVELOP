@@ -28,20 +28,23 @@
                             Button(size="small" variety="secondary") Распечатать счет
 
     .mobile-table.mobile-table_variant(v-if="isMobile")
-        .mobile-table__item
-            .mobile-table__title Сетевой газ
+        .mobile-table__item(v-for="bill in getBills" :key="bill.id")
+            .mobile-table__title № счета {{ bill.number }}
+            .mobile-table__field
+                .mobile-table__key Дата
+                .mobile-table__value
+                    span {{ bill.date }}
             .mobile-table__field
                 .mobile-table__key Задолженность
                 .mobile-table__value
-                    span {{ formatPrice(gas.debt) }}
+                    span {{ formatPrice(bill['summ']) }}
             .mobile-table__field
-                .mobile-table__key Пени
-                .mobile-table__value {{ formatPrice(gas.penalties) }}
-            .mobile-table__field
-                .mobile-table__key Итого
+                .mobile-table__key Статус
                 .mobile-table__value
-                    input(v-if="gas.debt !== 0 || gas.penalties !== 0" type="number" v-model="gas.toPay" placeholder="Введите сумму")
-                    span(v-if="gas.debt === 0 && gas.penalties === 0") {{ formatPrice(0) }}
+                    span {{ bill.status }}
+            .mobile-bills-button
+                a(:href="`#/${bill.number}.pdf`" @click.prevent="getPDFId(bill.number, bill.id)")
+                    Button.mobile-bills-link(size="small" variety="secondary") Распечатать счет
 
     //- .bills-pay__footer.bills-pay__footer_variant
         .bills-pay__total Итого к оплате
@@ -151,20 +154,10 @@ export default {
         }
     },
     mounted(){
-        
         this.$data.bills = this.getBills ? this.getBills.filter((el)=>el.agreement.id === this.$route.params.id) : null
         this.$store.commit("setPDFFile", null);
 
         console.log("bills", this.$data.bills)
-        
-       /*  this.$data.bills.forEach((el)=>{
-            this.$store.dispatch('getPDFFile', el.id).then(()=>{
-                this.$data.pdf.push(this.$store.getters.getPDFFile)
-                console.log(this.$data.pdf,'getpdfFilemounteddd')
-            })
-        }) */
-        
-
     }
 }
 </script>
@@ -178,4 +171,12 @@ export default {
     .bills-pay__pay
         span
             color: #fff
+
+.mobile-table__item
+    .mobile-bills-button
+        width: 100%
+
+        .mobile-bills-link
+            width: 100%
+            margin-top: 6px
 </style>

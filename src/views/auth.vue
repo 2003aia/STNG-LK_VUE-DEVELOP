@@ -217,6 +217,7 @@ export default {
     }
     if (this.isLoggedIn) {
       console.log("Вы авторизованы, покиньте страницу...");
+      this.$router.push('/agreements/')
     } else {
       this.$store.dispatch("getRegData").then((data) => {
         console.log("Получены данные для формы регистрации", data);

@@ -38,7 +38,7 @@
   .notice(v-if="getSendNotices.length > 0" )
     p(v-for="notice in getSendNotices" :class="{notice__error: notice.error}") {{ notice.message }}
   .bills-counter__footer.bills-counter__footer_variant
-    .bills-counter__description В случае неправильного ввода показаний, следует обратиться в отдел по работе с предприятиями УГРС по телефонам: 46-00-62, 46-00-73, 46-00-20, 46-00-25
+    .bills-counter__description Показания с приборов учета принимаются в период с 25 по 2 число каждого месяца<br> В случае неправильного ввода показаний, следует обратиться в отдел по работе с предприятиями УГРС по телефонам: 46-00-62, 46-00-73, 46-00-20, 46-00-25
     .bills-counter__submit
       ButtonClick(size="small", @click="sendIndication") Подтвердить 
 </template>
@@ -135,7 +135,7 @@ export default {
   },
   computed: {
     isMobile() {
-      return screen.width < 760;
+      return this.$screen.width < 760;
     },
     getCounters() {
       return this.$store.getters.getCurrentAgreement;
@@ -202,4 +202,7 @@ export default {
 
   &__error
     color: #e10000
+
+  @media screen and (max-width: $mobile-width) 
+    padding: 16px 
 </style>

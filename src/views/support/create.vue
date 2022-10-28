@@ -151,7 +151,9 @@ export default {
 .support-create
   width: 100%
   padding: 1.5rem
-
+  @media screen and (max-width: $mobile-width) 
+    padding: 0
+    
   .backward
     margin: 1.5rem
 

@@ -39,12 +39,13 @@ export default {
                     label: 'Обращения',
                     path: '/support'
                 },
-            ]
+            ],
+            mobileScreen: "requests",
         }
     },
     computed: {
         isMobile () {
-            return screen.width < 760
+            return this.$screen.width < 760
         },
         currentRoute () { return this.$route.params.currentRoute },
     
@@ -95,6 +96,7 @@ export default {
 
     @media screen and (max-width: $mobile-width)
         border-right: none
+        height: 100%
 
     .router-link-active
         border-bottom: 1px #3F64A9
