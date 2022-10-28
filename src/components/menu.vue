@@ -26,7 +26,10 @@
         Icon(icon="user" color="font-mute")
         span Мои данные
     
-    router-link(to="/pre-entry").menu__item
+    //- router-link(to="/pre-entry").menu__item
+    //-     Icon(icon="calendar" color="font-mute")
+    //-     span Предварительная запись
+    a(href="https://aostng.ru/prereg.php").menu__item
         Icon(icon="calendar" color="font-mute")
         span Предварительная запись
     
