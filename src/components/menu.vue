@@ -18,7 +18,7 @@
     //-     Icon(icon="history" color="font-mute")
     //-     span История платежей
 
-    a(href="https://aostng.ru/service/chart5/").menu__item
+    a(href="https://aostng.ru/service/uslugi-dlya-yur-lits/" target="_blank").menu__item
         Icon(icon="services" color="font-mute")
         span Услуги
 
@@ -29,7 +29,7 @@
     //- router-link(to="/pre-entry").menu__item
     //-     Icon(icon="calendar" color="font-mute")
     //-     span Предварительная запись
-    a(href="https://aostng.ru/prereg.php").menu__item
+    a(href="https://aostng.ru/prereg.php" target="_blank").menu__item
         Icon(icon="calendar" color="font-mute")
         span Предварительная запись
     
