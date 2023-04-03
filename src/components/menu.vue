@@ -18,17 +18,20 @@
     //-     Icon(icon="history" color="font-mute")
     //-     span История платежей
 
-    a(href="https://aostng.ru/service/chart5/").menu__item
+    a(href="https://aostng.ru/service/uslugi-dlya-yur-lits/").menu__item
         Icon(icon="services" color="font-mute")
         span Услуги
 
     router-link(to="/profile").menu__item
         Icon(icon="user" color="font-mute")
         span Мои данные
-    
-    router-link(to="/pre-entry").menu__item
+
+    a(href="https://aostng.ru/prereg.php").menu__item
         Icon(icon="calendar" color="font-mute")
         span Предварительная запись
+    //- router-link(to="/pre-entry").menu__item
+    //-     Icon(icon="calendar" color="font-mute")
+    //-     span Предварительная запись
     
     router-link(to="/support").menu__item
         Icon(icon="comments" color="font-mute")

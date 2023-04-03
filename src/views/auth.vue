@@ -206,11 +206,11 @@ export default {
     if (this.isLoggedIn) {
       console.log("Вы авторизованы, покиньте страницу...");
     } else {
-      fetch("https://1c.aostng.ru/VESTA/hs/API_STNG_JUR/V1/reg_details")
+      fetch("https://fhd.aostng.ru/vesta/hs/API_STNG_JUR/V1/reg_details")
         .then((res) => res.json())
         .then((data) => {
           console.log("Получены данные для формы регистрации", data);
-          this.regData = data;
+          this.regData = data.data;
         });
     }
   },
